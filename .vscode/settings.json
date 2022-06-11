@@ -1,0 +1,11 @@
+{
+  "explorer.confirmDelete": false,
+  "git.autofetch": true,
+  "git.enableSmartCommit": true,
+  "files.exclude": {
+      "**/*meta.xml": true
+  },
+  "salesforcedx-vscode-apex.java.home": "C:/Java/jdk8",
+  "salesforcedx-vscode-core.retrieve-test-code-coverage": true,
+  "salesforcedx-vscode-core.push-or-deploy-on-save.enabled":true
+}
