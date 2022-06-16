@@ -1,7 +1,11 @@
 <apex:page standardController="Job_Application__c" recordSetVar="applications" sidebar="false">
      <apex:pageBlock title="Job Applications">
           <apex:pageBlockTable value="{!applications}" var="ja">
-               <apex:column value="{!ja.Name}" />
+               <apex:column headerValue="Job Application Number">
+                    <apex:outputLink value="/{!ja.ID}">
+                         <apex:outputText>{!ja.Name}</apex:outputText>
+                    </apex:outputLink>
+               </apex:column>
                <apex:column value="{!ja.Position__c}" />
                <apex:column value="{!ja.Candidate__c}" />
                <apex:column value="{!ja.Avarage_rating__c}" />
