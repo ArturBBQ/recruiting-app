@@ -7,7 +7,11 @@
                     </apex:outputLink>
                </apex:column>
                <apex:column value="{!ja.Position__c}" />
+               <apex:column headerValue="Status of position" value="{!ja.Position__r.Status__c}" />
+               <apex:column headerValue="Vacancy open date" value="{!ja.Position__r.Vacancy_opening_date__c}" />
                <apex:column value="{!ja.Candidate__c}" />
+               <apex:column headerValue="Candidate`s phone" value="{!ja.Candidate__r.Phone__c}" />
+               <apex:column headerValue="Candidate`s E-mail" value="{!ja.Candidate__r.E_mail__c}" />
                <apex:column value="{!ja.Avarage_rating__c}" />
           </apex:pageBlockTable>
      </apex:pageBlock>
