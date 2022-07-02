@@ -1,0 +1,47 @@
+<apex:page controller="PositionController" tabStyle="Position__c">
+    <apex:form id="pageForm">
+        <apex:pageBlock title="Positions table">
+            <apex:selectList size="1" value="{!selectStatus}" multiselect="false">
+                <apex:selectOptions value="{!Status}" />
+                <apex:actionSupport event="onchange" action="{!getFilteredStatus}" rerender="pageForm" />
+            </apex:selectList>
+            <p/>
+            <table border="2px" cellpadding="1" cellspacing="1">
+                <tr bgcolor="#87CEFA">
+                    <th>Position</th>
+                    <th>Status</th>
+                    <th>Open date</th>
+                    <th>Close date</th>
+                    <th>Min salary</th>
+                    <th>Max salary</th>
+                </tr>
+                <apex:repeat value="{!position}" var="p">
+                    <tr>
+                        <td>
+                            <apex:outputField value="{!p.Name}" />
+                        </td>
+                        <td>
+                            <apex:inputField value="{!p.Status__c}" />
+                        </td>
+                        <td>
+                            <apex:outputField value="{!p.Vacancy_opening_date__c}" />
+                        </td>
+                        <td>
+                            <apex:outputField value="{!p.Application_deadline__c}" />
+                        </td>
+                        <td>
+                            <apex:outputField value="{!p.Min_Salary__c}" />
+                        </td>
+                        <td>
+                            <apex:outputField value="{!p.Max_Salary__c}" />
+                        </td>
+                    </tr>
+                </apex:repeat>
+            </table>
+            <br/>
+            <apex:pageMessages />
+            <apex:commandButton value="Save" action="{!save}" />
+            <apex:pageBlockButtons />
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
