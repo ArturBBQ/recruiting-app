@@ -2,7 +2,7 @@
     <apex:form id="pageForm">
         <apex:pageBlock title="Positions table">
             <apex:selectList size="1" value="{!selectStatus}" multiselect="false">
-                <apex:selectOptions value="{!Status}" />
+                <apex:selectOptions value="{!statusList}" />
                 <apex:actionSupport event="onchange" action="{!getFilteredStatus}" rerender="pageForm" />
             </apex:selectList>
             <p/>
