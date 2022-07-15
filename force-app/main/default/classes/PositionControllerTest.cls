@@ -8,49 +8,43 @@ private class PositionControllerTest {
         List<Schema.PicklistEntry> statusValues = status.getPicklistValues();
         List<SelectOption> options = pageCntrl.getStatusList();
         
-        System.assertEquals(4, options.size());
-        System.assertEquals(3, statusValues.size());
+        System.assertEquals(statusValues.size()+1, options.size());
     } 
 
     @isTest
     static void testGetFilteredStatus() {
-        
-        Position__c position1 = new Position__c(Name = 'Developer', Status__c = 'Open');
+        Position__c position1 = new Position__c(Name = 'Developer', Status__c = 'Open', Vacancy_opening_date__c = date.today());
         insert position1;
-        Position__c position2 = new Position__c(Name = 'Admin', Status__c = 'Closed');
+        Position__c position2 = new Position__c(Name = 'Admin', Status__c = 'Closed', Vacancy_opening_date__c = date.today().addDays(-91) );
         insert position2;
 
         PositionController pageCntrl = new PositionController();
-        pageCntrl.selectStatus = 'Closed';
-        pageCntrl.getFilteredStatus();
-        pageCntrl.positions = [SELECT Name, Status__c FROM Position__c];
+        pageCntrl.selectStatus = 'Open';
 
-        System.assertEquals(2, pageCntrl.positions.size());
-        System.assertEquals('Developer', pageCntrl.positions.get(0).Name);
-        System.assertEquals('Closed', pageCntrl.selectStatus);
-        System.assertEquals('Open', pageCntrl.positions.get(0).Status__c);
+        Test.startTest();
+            pageCntrl.getFilteredStatus();
+        Test.stopTest();
+
+        System.assertEquals(1, pageCntrl.positions.size());
     }
     
     @isTest 
     static void testSave() {
         Position__c position1 = new Position__c(Name = 'Developer', Status__c = 'Open');
         insert position1;
-        Position__c position2 = new Position__c(Name = 'Admin', Status__c = 'Closed');
-        insert position2;
+        
+        PositionController pageCntrl = new PositionController();           
+        position1.Name = 'Admin';
+        update position1;
+        pageCntrl.positions = [SELECT Name, Status__c FROM Position__c WHERE Id = :position1.id]; 
 
-        PositionController pageCntrl = new PositionController();
-        PageReference pager = page.PositionVFPage;
-        Test.setCurrentPage(pager);
-
-        Test.startTest();
+        Test.startTest();        
+            PageReference pager = page.PositionVFPage;
+            Test.setCurrentPage(pager);
             pageCntrl.save();
         Test.stopTest();
-        
-        pageCntrl.positions = [SELECT Name, Status__c, Vacancy_opening_date__c, Application_deadline__c, Min_Salary__c, Max_Salary__c 
-                               FROM Position__c];
 
-        
-        System.assertEquals('Open', pageCntrl.positions.get(0).Status__c);
-                            
+        List <Position__c> savedPos = [SELECT Name, Status__c FROM Position__c WHERE Id = :position1.id LIMIT 1];
+        System.assertEquals('Admin', savedPos.get(0).Name);                 
     }
 }
