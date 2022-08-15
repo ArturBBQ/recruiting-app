@@ -10,18 +10,18 @@ import STATUS_FIELD from '@salesforce/schema/Position__c.Status__c';
 
 export default class PositionLWC extends LightningElement {
 
-  records;
   _wiredPositions;
+  records;
   positionStatusValues;
   allStatusValues;
   selectedValue = 'All';
   positionsToUpdate= [];
   errorMessage;
+  @api visiblePositions;
     
   @wire(getPositionList)  
     wiredPositions(response){
       this._wiredPositions = response;
-        console.log(STATUS_FIELD);
       if (response.data) {
           this.records = response.data;
             console.log('response.data', response.data);
@@ -35,24 +35,23 @@ export default class PositionLWC extends LightningElement {
     objectInfo;
 
   @wire( getPicklistValues, { recordTypeId: "$objectInfo.data.defaultRecordTypeId", fieldApiName: STATUS_FIELD } )
-  getStatePicklistValues({data, error}) {
-    if (data) {
-      this.positionStatusValues = data.values;
-        console.log('result: ', data.values);
-      this.allStatusValues = [ { label: 'All', value: 'All' }, ...data.values ];
-        console.log('allStatusValues: ', this.allStatusValues);
-    } else if (error) {
+    getStatePicklistValues({data, error}) {
+      if (data) {
+        this.positionStatusValues = data.values;
+          console.log('result: ', data.values);
+        this.allStatusValues = [ { label: 'All', value: 'All' }, ...data.values ];
+          console.log('allStatusValues: ', this.allStatusValues);
+      } else if (error) {
         this.error = error;
     }
   } 
 
-   handleChange (event) {
+  handleChange (event) {
       this.selectedValue = event.target.value;
       if ( this.selectedValue === 'All' ) 
           this.records = this.allRecords;
       else if (this.selectedValue !== 'All')
           this.records = this.allRecords.filter(element => {
-            console.log(element);
            return element.Status__c === this.selectedValue});
           console.log('result 2: ', this.records);
     }      
@@ -60,23 +59,22 @@ export default class PositionLWC extends LightningElement {
   handleFieldChange(event) {
       let newComboboxValue = event.target.value;
       let recordId = event.currentTarget.dataset.index;
-       console.log(recordId);
-        if (this.positionsToUpdate.filter(element => element.Id === recordId).length) 
-            {this.positionsToUpdate.map(element => {
-            if (element.Id === recordId){
+      if (this.positionsToUpdate.filter(element => element.Id === recordId).length) {
+          this.positionsToUpdate.map(element => {
+            if (element.Id === recordId) {
               element.Status__c = newComboboxValue;
-              }
+            }
             return element;
-            })
-        } else {
-          this.positionsToUpdate.push({Id : recordId, Status__c : newComboboxValue})
-        }
+          })
+      } else {
+        this.positionsToUpdate.push( {Id : recordId, Status__c : newComboboxValue} );
+      }
     }
 
   updateStatus() {
     updatePosition({ positions : this.positionsToUpdate })
       .then(() => {
-            return refreshApex ( this._wiredPositions )
+          return refreshApex ( this._wiredPositions )
             .then(() => {
               this.dispatchEvent(
                   new ShowToastEvent({
@@ -92,4 +90,9 @@ export default class PositionLWC extends LightningElement {
           console.log('unable to update the record' + JSON.stringify(this.errorMessage));
         })
     }
+    
+  updatePositionHandler(event){
+    this.visiblePositions=[...event.target.records]
+    console.log(event.target.records);
+  }
 }

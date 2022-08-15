@@ -20,7 +20,7 @@
         <thead>
               <tr class="slds-line-height_reset">
                    <th scope="col">
-                     <div title="Position">Position Name</div>
+                     <div title="Position Name">Position Name</div>
                    </th>
                    <th scope="col">
                      <div title="Status">Status</div>
@@ -39,20 +39,19 @@
                   </th>
               </tr>
         </thead>
-          <tbody>
-            <template for:each={records} for:item="item">
+        <tbody>
+          <template if:true={visiblePositions}>
+            <template for:each={visiblePositions} for:item="item">
               <tr key={item.Id}>
                 <th>
                   <div>{item.Name}</div>
                 </th>
                 <th>
-                  <template if:true={positionStatusValues}>
                     <lightning-combobox data-index={item.Id}
                                         value={item.Status__c} 
                                         options={positionStatusValues}
                                         onchange={handleFieldChange}>
                     </lightning-combobox>
-                  </template>
                 </th>
                 <th>
                   <div>{item.Vacancy_opening_date__c}</div>
@@ -68,8 +67,12 @@
                 </th>
               </tr>
             </template>
-          </tbody>
+          </template>
+        </tbody>
       </table>
+    </div>
+    <div slot="footer">
+      <c-paginator records={records} onupdate={updatePositionHandler} ></c-paginator>
     </div>
   </lightning-card>
 </template>

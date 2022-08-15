@@ -1,0 +1,32 @@
+<template>
+    <lightning-layout>
+        <lightning-layout-item> 
+            <lightning-button
+            label="Prev"
+            icon-name="utility:chevronleft"
+            onclick={prevHandler}
+            disabled={disablePrev}>
+            </lightning-button>
+        </lightning-layout-item >
+
+    <div style="padding-left:10px; padding-right:10px;">
+        <lightning-layout-item> 
+            <template for:each={pagesList} for:item="item">
+                <span key={item} class="slds-button-group-item" >
+                    <button data-id={item} class="slds-button slds-button_neutral" onclick={onPageClick}> {item} </button>
+                </span>
+            </template>
+        </lightning-layout-item>
+    </div>
+
+        <lightning-layout-item> 
+            <lightning-button 
+            label="Next"
+            icon-name="utility:chevronright"
+            icon-position="right"
+            onclick={nextHandler}
+            disabled={disableNext}>
+            </lightning-button>
+        </lightning-layout-item>
+    </lightning-layout>
+</template>

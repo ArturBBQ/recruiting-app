@@ -12,5 +12,4 @@ public with sharing class PositionHelper {
         System.debug(positions);
         update positions;
     } 
-
 }
