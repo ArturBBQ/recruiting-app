@@ -1,0 +1,75 @@
+<template>
+  <lightning-card>
+  <div class="slds-box">
+    <div class="slds-text-color_inverse slds-text-heading_large" style="padding: 5px; background:#16325c">        
+      Positions
+    </div> 
+    <div style="width:200px; padding: 5px;">
+      <lightning-combobox name="filter"
+                          label="Status"
+                          value={selectedValue}
+                          options={allStatusValues}
+                          onchange={handleChange}>
+      </lightning-combobox>
+    </div> 
+     <div slot="footer" style=" padding: 5px;">
+        <lightning-button variant="brand" type="submit" label="Save" onclick={updateStatus}>
+      </lightning-button>
+    </div> 
+      <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+        <thead>
+              <tr class="slds-line-height_reset">
+                   <th scope="col">
+                     <div title="Position">Position Name</div>
+                   </th>
+                   <th scope="col">
+                     <div title="Status">Status</div>
+                   </th>
+                   <th scope="col">
+                    <div title="Open date">Open date</div>
+                  </th>
+                  <th scope="col">
+                    <div title="Close date">Close date</div>
+                  </th>
+                  <th scope="col">
+                    <div title="Min salary">Min salary</div>
+                  </th>
+                  <th scope="col">
+                    <div title="Max salary">Max salary</div>
+                  </th>
+              </tr>
+        </thead>
+          <tbody>
+            <template for:each={records} for:item="item">
+              <tr key={item.Id}>
+                <th>
+                  <div>{item.Name}</div>
+                </th>
+                <th>
+                  <template if:true={positionStatusValues}>
+                    <lightning-combobox data-index={item.Id}
+                                        value={item.Status__c} 
+                                        options={positionStatusValues}
+                                        onchange={handleFieldChange}>
+                    </lightning-combobox>
+                  </template>
+                </th>
+                <th>
+                  <div>{item.Vacancy_opening_date__c}</div>
+                </th>
+                <th>
+                  <div>{item.Application_deadline__c}</div>
+                </th>
+                <th>
+                  <div>{item.Min_Salary__c}</div>
+                </th>
+                <th>
+                  <div>{item.Max_Salary__c}</div>
+                </th>
+              </tr>
+            </template>
+          </tbody>
+      </table>
+    </div>
+  </lightning-card>
+</template>

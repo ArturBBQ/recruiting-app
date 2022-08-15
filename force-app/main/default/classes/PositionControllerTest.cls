@@ -45,6 +45,6 @@ private class PositionControllerTest {
         Test.stopTest();
 
         List <Position__c> savedPos = [SELECT Name, Status__c FROM Position__c WHERE Id = :position1.id LIMIT 1];
-        System.assertEquals('Admin', savedPos.get(0).Name);                 
+        System.assertEquals('Admin', savedPos.get(0).Name);
     }
 }
