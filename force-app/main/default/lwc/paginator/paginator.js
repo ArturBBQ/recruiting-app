@@ -1,73 +1,68 @@
-import { api, LightningElement } from 'lwc';
+import { api, track, LightningElement } from 'lwc';
 
 export default class Paginator extends LightningElement {
+    
+    @api records;
+    @api recordsPerPage;
+    @api recordsToDisplay;
 
-    currentPage = 1;
+    pageLinks = [];
     totalRecords;
-    recordSize = 5;
-    totalPage = 0;
-    pages=[];
+    totalPages;
+    pageNo;
 
-    get records() {
-        return this.visibleRecords;
+    setRecordsToDisplay(){
+        this.totalRecords = this.records.length;
+        this.pageNo = 1;
+        this.totalPages = Math.ceil(this.totalRecords / recordsPerPage);
+        this.preparePaginationList();
+
+        for (let i = 1; i <= this.totalPages; i++) {
+            this.pageLinks.push(i);
+        }
     }
 
-    @api
-    set records(data) {
-        if(data){
-            this.totalRecords = data;
-            this.recordSize = Number(this.recordSize)
-            this.totalPage = Math.ceil(data.length/this.recordSize);
-            this.updateRecords();
+    handleClick(event) {
+        let label = event.target.label;
+        if (label === "Prev") {
+            this.handlePrevious();
+        } else if (label === "Next") {
+            this.handleNext();
         }
+    }
+
+    handlePrevious() {
+        this.pageNo = this.pageNo - 1;
+        this.preparePaginationList();
+    }
+
+    handleNext() {
+        this.pageNo = this.pageNo + 1;
+        this.preparePaginationList();
     }
 
     get disablePrev(){ 
-        return this.currentPage <= 1;
+        return this.pageNo <= 1;
     }
 
     get disableNext(){ 
-        return this.currentPage >= this.totalPage;
+        return this.pageNo >= this.totalPages;
     }
 
-    prevHandler(){
-        if(this.currentPage > 1){
-           this.currentPage = this.currentPage-1;
-           console.log('prevHandler: ', this.currentPage);
-           this.updateRecords();
-        }
-    }
-
-    nextHandler(){
-        if(this.currentPage < this.totalPage){
-           this.currentPage = this.currentPage+1;
-           console.log('nextHandler: ', this.currentPage);
-           this.updateRecords();
-        }
-
-    }
-
-    updateRecords() {
-        let start = (this.currentPage-1)*this.recordSize;
-        let end = this.recordSize*this.currentPage;
-        this.visibleRecords = this.totalRecords.slice(start, end);
-        this.dispatchEvent(new CustomEvent('update', {
-            detail : { 
-                records : this.visibleRecords 
+    preparePaginationList(){
+        let start = (this.pageNo - 1) * this.recordsPerPage;
+        let end = start + this.recordsPerPage;
+        this.recordsToDisplay = this.records.slice(start, end);
+        this.dispatchEvent(new CustomEvent ('pagination', {
+            detail: {
+                records : this.recordsToDisplay
             }
-        }))
-    } 
-    
-    get pagesList(){
-        let mid = Math.floor(this.recordSize/2)+1;
-        if(this.currentPage>mid){
-            return this.pages.slice(this.currentPage-mid, this.currentPage+mid-1);
-        }
-        return this.pages.slice(0, this.recordSize);
+        }))  
     }
 
-    onPageClick = (event) =>{
-        this.currentPage = parseInt(event.target.dataset.id, 10);
+    handlePage (button) {
+        this.pageNo = button.target.label;
+        this.preparePaginationList();
     }
 
 }

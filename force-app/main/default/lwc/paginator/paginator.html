@@ -1,32 +1,27 @@
 <template>
-    <lightning-layout>
-        <lightning-layout-item> 
-            <lightning-button
+    <div slot="actions">
+        <lightning-button
             label="Prev"
             icon-name="utility:chevronleft"
-            onclick={prevHandler}
+            onclick={handleClick}
             disabled={disablePrev}>
-            </lightning-button>
-        </lightning-layout-item >
+        </lightning-button>
 
-    <div style="padding-left:10px; padding-right:10px;">
-        <lightning-layout-item> 
-            <template for:each={pagesList} for:item="item">
-                <span key={item} class="slds-button-group-item" >
-                    <button data-id={item} class="slds-button slds-button_neutral" onclick={onPageClick}> {item} </button>
-                </span>
-            </template>
-        </lightning-layout-item>
-    </div>
+                <lightning-button-group>
+                    <template for:each={pageLinks} for:item="item">
+                    <lightning-button
+                        key={item}
+                        label={item}
+                        onclick={handlePage}> {item} </lightning-button>
+                    </template>
+                </lightning-button-group>
 
-        <lightning-layout-item> 
-            <lightning-button 
+        <lightning-button 
             label="Next"
             icon-name="utility:chevronright"
             icon-position="right"
-            onclick={nextHandler}
+            onclick={handleClick}
             disabled={disableNext}>
-            </lightning-button>
-        </lightning-layout-item>
-    </lightning-layout>
+        </lightning-button>
+    </div>
 </template>

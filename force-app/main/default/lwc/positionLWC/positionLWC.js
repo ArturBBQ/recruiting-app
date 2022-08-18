@@ -17,11 +17,15 @@ export default class PositionLWC extends LightningElement {
   selectedValue = 'All';
   positionsToUpdate= [];
   errorMessage;
-  @api visiblePositions;
+
+  totalPages;
+  pageSize = 5;
+  @api recordsToDisplay;
     
   @wire(getPositionList)  
     wiredPositions(response){
       this._wiredPositions = response;
+      console.log('response', response.data);
       if (response.data) {
           this.records = response.data;
             console.log('response.data', response.data);
@@ -38,7 +42,7 @@ export default class PositionLWC extends LightningElement {
     getStatePicklistValues({data, error}) {
       if (data) {
         this.positionStatusValues = data.values;
-          console.log('result: ', data.values);
+          console.log('positionStatusValues: ', data.values);
         this.allStatusValues = [ { label: 'All', value: 'All' }, ...data.values ];
           console.log('allStatusValues: ', this.allStatusValues);
       } else if (error) {
@@ -90,9 +94,12 @@ export default class PositionLWC extends LightningElement {
           console.log('unable to update the record' + JSON.stringify(this.errorMessage));
         })
     }
-    
-  updatePositionHandler(event){
-    this.visiblePositions=[...event.target.records]
-    console.log(event.target.records);
-  }
+
+  handlePagination(event){
+    const start = (event.detail-1)*this.pageSize;
+    const end = this.pageSize*event.detail;
+    this.recordsToDisplay = this.totalPages.slice(start, end);
+    console.log('start, end ', start, end);
+    console.log('Pagination Action Handled ', this.recordsToDisplay);
+}
 }
