@@ -40,8 +40,8 @@
               </tr>
         </thead>
         <tbody>
-          <template if:true={records}>
-            <template for:each={records} for:item="item">
+          <template if:true={recordsToDisplay}>
+            <template for:each={recordsToDisplay} for:item="item">
               <tr key={item.Id}>
                 <th>
                   <div>{item.Name}</div>
@@ -72,7 +72,7 @@
       </table>
     </div>
     <div slot="footer" >
-        <c-paginator records={recordsToDisplay} recordsperpage="5" onpagination={handlePagination} ></c-paginator>
+        <c-paginator records={records} records-per-page={recordsPerPage} onpagination={handlePagination} ></c-paginator>
     </div> 
   </lightning-card>
 </template>

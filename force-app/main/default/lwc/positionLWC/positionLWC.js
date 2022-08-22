@@ -18,9 +18,8 @@ export default class PositionLWC extends LightningElement {
   positionsToUpdate= [];
   errorMessage;
 
-  totalPages;
-  pageSize = 5;
   @api recordsToDisplay;
+  @api recordsPerPage;
     
   @wire(getPositionList)  
     wiredPositions(response){
@@ -91,15 +90,12 @@ export default class PositionLWC extends LightningElement {
         })
       .catch((error) => { 
         this.errorMessage=error;
-          console.log('unable to update the record' + JSON.stringify(this.errorMessage));
+          console.log('unable to update the record' + this.errorMessage);
         })
     }
 
   handlePagination(event){
-    const start = (event.detail-1)*this.pageSize;
-    const end = this.pageSize*event.detail;
-    this.recordsToDisplay = this.totalPages.slice(start, end);
-    console.log('start, end ', start, end);
-    console.log('Pagination Action Handled ', this.recordsToDisplay);
-}
+      this.recordsToDisplay = [...event.detail.records];
+      console.log('[...event.detail.records]: ', JSON.stringify(event.detail.records));
+  }
 }
