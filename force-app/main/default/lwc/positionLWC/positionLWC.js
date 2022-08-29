@@ -10,7 +10,6 @@ import STATUS_FIELD from '@salesforce/schema/Position__c.Status__c';
 
 export default class PositionLWC extends LightningElement {
 
-  _wiredPositions;
   records;
   positionStatusValues;
   allStatusValues;
@@ -20,22 +19,10 @@ export default class PositionLWC extends LightningElement {
 
   @api recordsToDisplay;
   @api recordsPerPage;
-    
-  @wire(getPositionList)  
-    wiredPositions(response){
-      this._wiredPositions = response;
-      console.log('response', response.data);
-      if (response.data) {
-          this.records = response.data;
-            console.log('response.data', response.data);
-          this.allRecords = response.data;
-      } else if (response.error) {
-          this.error = response.error;
-      }
-    } 
-
+  @api numberOfRecords;
+   
   @wire( getObjectInfo, { objectApiName: POSITION_OBJECT } )
-    objectInfo;
+    objectInfo; 
 
   @wire( getPicklistValues, { recordTypeId: "$objectInfo.data.defaultRecordTypeId", fieldApiName: STATUS_FIELD } )
     getStatePicklistValues({data, error}) {
@@ -51,12 +38,12 @@ export default class PositionLWC extends LightningElement {
 
   handleChange (event) {
       this.selectedValue = event.target.value;
+      console.log('this.selectedValue event.target.value: ', event.target.value);
       if ( this.selectedValue === 'All' ) 
           this.records = this.allRecords;
       else if (this.selectedValue !== 'All')
           this.records = this.allRecords.filter(element => {
            return element.Status__c === this.selectedValue});
-          console.log('result 2: ', this.records);
     }      
 
   handleFieldChange(event) {
@@ -77,7 +64,7 @@ export default class PositionLWC extends LightningElement {
   updateStatus() {
     updatePosition({ positions : this.positionsToUpdate })
       .then(() => {
-          return refreshApex ( this._wiredPositions )
+          getPositionList()
             .then(() => {
               this.dispatchEvent(
                   new ShowToastEvent({
@@ -94,8 +81,30 @@ export default class PositionLWC extends LightningElement {
         })
     }
 
-  handlePagination(event){
-      this.recordsToDisplay = [...event.detail.records];
-      console.log('[...event.detail.records]: ', JSON.stringify(event.detail.records));
+  get numberOfRecords() {
+    if(this.records){
+      return this.records.length
+    }
   }
+
+  connectedCallback() {
+    getPositionList()
+    .then(result => {
+        this.records = result;
+          console.log('//// this.records', this.records);
+        this.allRecords = result;
+          console.log('//// this.numberOfRecords: ', this.numberOfRecords);
+          console.log('//// this.recordsPerPage: ', this.recordsPerPage);
+      })
+    .catch(error => {
+        this.error = error;
+    });
+  }
+  
+  handlePagination(event){
+    this.recordsToDisplay = this.numberOfRecords.slice(event.target.start, event.target.end);
+}
+
+
+
 }

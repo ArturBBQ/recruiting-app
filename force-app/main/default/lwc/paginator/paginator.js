@@ -3,29 +3,23 @@ import { api, track, LightningElement } from 'lwc';
 export default class Paginator extends LightningElement {
     
     pageNo = 1;
-    totalRecords;
+    pageNumbers = [];
     totalPages = 0;
-    pageLinks = [];
+    
     @api recordsPerPage;
+    @api numberOfRecords;
+    
+    connectedCallback() {
+        console.log('child this.numberOfRecords: ', this.numberOfRecords);
+        console.log('child this.recordsPerPage: ', this.recordsPerPage);
+        this.totalPages = Math.ceil(Number(this.numberOfRecords)/Number(this.recordsPerPage)); 
+        console.log('child this.totalPages: ', this.totalPages);
 
-    get records() {
-        return this.recordsToDisplay
-    }
-
-    @api
-    set records(data) {
-        if(data){
-            this.totalRecords = data;
-            this.recordsPerPage = Number(this.recordsPerPage);
-            this.totalPages = Math.ceil(data.length/this.recordsPerPage);
-            this.preparePaginationList();
-
-            for (let i = 1; i <= this.totalPages; i++) {
-                this.pageLinks.push(i);
-            }
-            this.preparePaginationList();
+        for (let i = 1; i <= this.totalPages; i++) {
+            this.pageNumbers.push(i);
         }
-    }
+        
+    }     
 
     prevHandler(){
         this.pageNo = this.pageNo-1;
@@ -48,16 +42,16 @@ export default class Paginator extends LightningElement {
     preparePaginationList() {
         let start = (this.pageNo-1)*this.recordsPerPage;
         let end = this.recordsPerPage*this.pageNo;
-        this.recordsToDisplay = this.totalRecords.slice(start, end);
         this.dispatchEvent(new CustomEvent('pagination', {
-            detail:{
-                records : this.recordsToDisplay 
+            details:{
+                start: var1,
+                end: var2 
             }
         }))
     }
 
-    handlePage (button) {
-        this.pageNo = button.target.label;
+    handlePage (event) {
+        this.pageNo = Number(event.target.label);
         this.preparePaginationList();
     }
 }
