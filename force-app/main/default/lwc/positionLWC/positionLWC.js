@@ -1,8 +1,7 @@
-import { LightningElement, wire, api, track } from 'lwc';
+import { LightningElement, wire, api } from 'lwc';
 
 import getPositionList from '@salesforce/apex/PositionHelper.getPositionList';
 import updatePosition from '@salesforce/apex/PositionHelper.updatePosition';
-import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { getPicklistValues, getObjectInfo } from 'lightning/uiObjectInfoApi';
 import POSITION_OBJECT from '@salesforce/schema/Position__c';
@@ -16,11 +15,24 @@ export default class PositionLWC extends LightningElement {
   selectedValue = 'All';
   positionsToUpdate= [];
   errorMessage;
+  startIndex = 0;
+  endIndex;
+  _recordsPerPage;
 
-  @api recordsToDisplay;
+  @api numberOfRecords
   @api recordsPerPage;
-  @api numberOfRecords;
    
+  connectedCallback() {
+    getPositionList()
+    .then(result => {
+        this.records = result;
+        this.allRecords = result;
+      })
+    .catch(error => {
+        this.error = error;
+    });
+  }
+
   @wire( getObjectInfo, { objectApiName: POSITION_OBJECT } )
     objectInfo; 
 
@@ -37,14 +49,20 @@ export default class PositionLWC extends LightningElement {
   } 
 
   handleChange (event) {
-      this.selectedValue = event.target.value;
-      console.log('this.selectedValue event.target.value: ', event.target.value);
-      if ( this.selectedValue === 'All' ) 
-          this.records = this.allRecords;
-      else if (this.selectedValue !== 'All')
-          this.records = this.allRecords.filter(element => {
-           return element.Status__c === this.selectedValue});
-    }      
+    this.selectedValue = event.target.value;
+    console.log('<------CHANGE STATUS ON---------> ', this.selectedValue);
+    if(this.selectedValue === 'All'){
+        this.records = this.allRecords;
+    } else if(this.selectedValue !== 'All'){
+        this.records = this.allRecords.filter(element => {
+          return element.Status__c === this.selectedValue;
+        });
+    }
+      getPositionList()
+        .then(() => {
+          this.template.querySelector("c-paginator").calculateTotalPages(); 
+      })
+  }
 
   handleFieldChange(event) {
       let newComboboxValue = event.target.value;
@@ -74,37 +92,45 @@ export default class PositionLWC extends LightningElement {
                   })
               );
           }) 
-        })
+      })
       .catch((error) => { 
         this.errorMessage=error;
           console.log('unable to update the record' + this.errorMessage);
-        })
-    }
-
+      })
+  }
+  
   get numberOfRecords() {
     if(this.records){
+      console.log('/GETTER numberOfRecords ',  this.records.length);
       return this.records.length
     }
   }
-
-  connectedCallback() {
-    getPositionList()
-    .then(result => {
-        this.records = result;
-          console.log('//// this.records', this.records);
-        this.allRecords = result;
-          console.log('//// this.numberOfRecords: ', this.numberOfRecords);
-          console.log('//// this.recordsPerPage: ', this.recordsPerPage);
-      })
-    .catch(error => {
-        this.error = error;
-    });
-  }
   
+  get recordsPerPage(){
+      return this._recordsPerPage;
+  } 
+  
+  set recordsPerPage(value){
+    if(value){
+      this._recordsPerPage = value;
+      this.endIndex = this._recordsPerPage;
+    }
+  } 
+
+  get visibleRecords() {
+    if(this.records){
+      console.log('/ this.startIndex ',  this.startIndex);
+      console.log('/ this.endIndex ',  this.endIndex);
+      console.log('/ this.records.slice( this.startIndex, this.endIndex) ',  this.records.slice( this.startIndex, this.endIndex));
+      return this.records.slice( this.startIndex, this.endIndex);
+    }
+  }
+
   handlePagination(event){
-    this.recordsToDisplay = this.numberOfRecords.slice(event.target.start, event.target.end);
-}
-
-
+    this.startIndex = event.detail.start;
+    console.log('//// this.startIndex: ', this.startIndex);
+    this.endIndex = event.detail.end;
+    console.log('//// this.endIndex: ', this.endIndex);
+  }
 
 }

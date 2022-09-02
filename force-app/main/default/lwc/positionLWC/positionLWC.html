@@ -40,8 +40,8 @@
               </tr>
         </thead>
         <tbody>
-          <template if:true={records}>
-            <template for:each={records} for:item="item">
+          <template if:true={visibleRecords}>
+            <template for:each={visibleRecords} for:item="item">
               <tr key={item.Id}>
                 <th>
                   <div>{item.Name}</div>

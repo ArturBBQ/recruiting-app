@@ -9,25 +9,30 @@ export default class Paginator extends LightningElement {
     @api recordsPerPage;
     @api numberOfRecords;
     
-    connectedCallback() {
+    connectedCallback(){
+        this.calculateTotalPages();
+    }     
+
+    @api
+    calculateTotalPages(){
         console.log('child this.numberOfRecords: ', this.numberOfRecords);
         console.log('child this.recordsPerPage: ', this.recordsPerPage);
         this.totalPages = Math.ceil(Number(this.numberOfRecords)/Number(this.recordsPerPage)); 
         console.log('child this.totalPages: ', this.totalPages);
 
-        for (let i = 1; i <= this.totalPages; i++) {
-            this.pageNumbers.push(i);
-        }
-        
-    }     
+        this.pageNumbers = Array(this.totalPages).fill().map((event, i) => i + 1);
+        console.log('CHILD this.pageNumbers', this.pageNumbers);
+    }
 
     prevHandler(){
         this.pageNo = this.pageNo-1;
+        console.log('child pageNo NOW: ', this.pageNo);
         this.preparePaginationList();
     }
 
     nextHandler(){
         this.pageNo = this.pageNo+1;
+        console.log('child pageNo NOW: ', this.pageNo);
         this.preparePaginationList();
     }
 
@@ -38,20 +43,21 @@ export default class Paginator extends LightningElement {
     get disableNext(){ 
         return this.pageNo >= this.totalPages;
     }
-
-    preparePaginationList() {
+        
+    preparePaginationList(){
         let start = (this.pageNo-1)*this.recordsPerPage;
-        let end = this.recordsPerPage*this.pageNo;
-        this.dispatchEvent(new CustomEvent('pagination', {
-            details:{
-                start: var1,
-                end: var2 
-            }
+        console.log('child start: ', start);
+        let end = start + this.recordsPerPage;
+        console.log('child end: ', end);
+
+        this.dispatchEvent(CustomEvent('pagination', {
+            detail:{ start, end }
         }))
     }
 
-    handlePage (event) {
+    handlePage (event){
         this.pageNo = Number(event.target.label);
+        console.log('child this.pageNo: ', this.pageNo);
         this.preparePaginationList();
     }
 }
