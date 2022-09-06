@@ -4,25 +4,38 @@ export default class Paginator extends LightningElement {
     
     pageNo = 1;
     pageNumbers = [];
-    totalPages = 0;
-    
+    totalPages;
+    _numberOfRecords;
+
     @api recordsPerPage;
     @api numberOfRecords;
     
+    get numberOfRecords() {
+          return this._numberOfRecords;
+      }
+     
+    set numberOfRecords(value){
+        if(value){
+            this._numberOfRecords = value;
+            this.totalPages = Math.ceil(Number(this._numberOfRecords)/Number(this.recordsPerPage));
+            this.calculateTotalPages();
+        } 
+    }
+
     connectedCallback(){
         this.calculateTotalPages();
-    }     
-
-    @api
+    }      
+    
     calculateTotalPages(){
         console.log('child this.numberOfRecords: ', this.numberOfRecords);
         console.log('child this.recordsPerPage: ', this.recordsPerPage);
+        this.pageNo = 1;
         this.totalPages = Math.ceil(Number(this.numberOfRecords)/Number(this.recordsPerPage)); 
-        console.log('child this.totalPages: ', this.totalPages);
-
+        console.log('child this.totalPages: ', this.totalPages); 
+        
         this.pageNumbers = Array(this.totalPages).fill().map((event, i) => i + 1);
         console.log('CHILD this.pageNumbers', this.pageNumbers);
-    }
+    } 
 
     prevHandler(){
         this.pageNo = this.pageNo-1;

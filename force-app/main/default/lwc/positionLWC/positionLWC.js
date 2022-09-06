@@ -19,7 +19,7 @@ export default class PositionLWC extends LightningElement {
   endIndex;
   _recordsPerPage;
 
-  @api numberOfRecords
+  @api numberOfRecords;
   @api recordsPerPage;
    
   connectedCallback() {
@@ -31,7 +31,7 @@ export default class PositionLWC extends LightningElement {
     .catch(error => {
         this.error = error;
     });
-  }
+  } 
 
   @wire( getObjectInfo, { objectApiName: POSITION_OBJECT } )
     objectInfo; 
@@ -58,10 +58,9 @@ export default class PositionLWC extends LightningElement {
           return element.Status__c === this.selectedValue;
         });
     }
-      getPositionList()
-        .then(() => {
-          this.template.querySelector("c-paginator").calculateTotalPages(); 
-      })
+      //setTimeout(() => {
+      // this.template.querySelector("c-paginator").calculateTotalPages(); 
+      //}, 0); 
   }
 
   handleFieldChange(event) {
@@ -77,7 +76,7 @@ export default class PositionLWC extends LightningElement {
       } else {
         this.positionsToUpdate.push( {Id : recordId, Status__c : newComboboxValue} );
       }
-    }
+  }
 
   updateStatus() {
     updatePosition({ positions : this.positionsToUpdate })
@@ -98,11 +97,11 @@ export default class PositionLWC extends LightningElement {
           console.log('unable to update the record' + this.errorMessage);
       })
   }
-  
+
   get numberOfRecords() {
     if(this.records){
-      console.log('/GETTER numberOfRecords ',  this.records.length);
-      return this.records.length
+    console.log('GETTER  this.records.length: ', this.records.length);
+      return this.records.length;
     }
   }
   
@@ -112,8 +111,9 @@ export default class PositionLWC extends LightningElement {
   
   set recordsPerPage(value){
     if(value){
+      console.log('SETTER recordsPerPage value', value);
       this._recordsPerPage = value;
-      this.endIndex = this._recordsPerPage;
+      this.endIndex = value;
     }
   } 
 
