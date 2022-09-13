@@ -6,18 +6,17 @@
             onclick={prevHandler}
             disabled={disablePrev}>
         </lightning-button>
-
-                <lightning-button-group>
-                    <div style="padding-left:10px; padding-right:10px;">
-                    <template for:each={pageNumbers} for:item="item">
+        <lightning-button-group>
+            <div style="padding-left:10px; padding-right:10px;">
+                <template for:each={pageNumbers} for:item="item">
                     <lightning-button
                         key={item}
                         label={item}
-                        onclick={handlePage}> {item} </lightning-button>
-                    </template>
-                </div>
-                </lightning-button-group>
-     
+                        onclick={handlePage}> {item} 
+                    </lightning-button>
+                </template>
+            </div>
+        </lightning-button-group>
         <lightning-button 
             label="Next"
             icon-name="utility:chevronright"

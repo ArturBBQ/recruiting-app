@@ -1,4 +1,4 @@
-import { api, track, LightningElement } from 'lwc';
+import { api, LightningElement } from 'lwc';
 
 export default class Paginator extends LightningElement {
     
@@ -11,8 +11,8 @@ export default class Paginator extends LightningElement {
     @api numberOfRecords;
     
     get numberOfRecords() {
-          return this._numberOfRecords;
-      }
+        return this._numberOfRecords;
+    }
      
     set numberOfRecords(value){
         if(value){
