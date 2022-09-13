@@ -1,0 +1,83 @@
+<template>
+    <lightning-card>
+      <div class="slds-box">
+        <div class="slds-text-color_inverse slds-text-heading_large" style="padding: 5px; background:#16325c">        
+            Positions
+        </div> 
+        <div style="width:200px; padding:10px;">
+          <lightning-combobox name="filter"
+                              label="Status"
+                              value={selectedValue}
+                              options={allStatusValues}
+                              onchange={handleFilteredStatus}>
+          </lightning-combobox>
+        </div>
+        <div slot="footer" style=" padding: 5px;">
+          <lightning-button variant="brand" type="submit" label="Save" onclick={updateStatus}>
+          </lightning-button>
+        </div> 
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+          <thead>
+            <tr class="slds-line-height_reset">
+              <th class="" scope="col">
+                <div class="slds-truncate" title="Position Name">Position Name</div>
+              </th>
+              <th class="" scope="col">
+                <div class="slds-truncate" title="Status">Status</div>
+              </th>
+              <th class="" scope="col">
+                <div class="slds-truncate" title="Open date">Open date</div>
+              </th>
+              <th class="" scope="col">
+                <div class="slds-truncate" title="Close date">Close date</div>
+              </th>
+              <th class="" scope="col">
+                <div class="slds-truncate" title="Min salary">Min salary</div>
+              </th>
+              <th class="" scope="col">
+                <div class="slds-truncate" title="Max salary">Max salary</div>
+              </th>
+            </tr>
+        </thead>
+          <tbody>
+            <template if:true={recordsToDisplay}>
+              <template for:each={recordsToDisplay} for:item="item">
+                <tr key={item.Id}>
+                  <th>
+                    <div>{item.Name}</div>
+                  </th>
+                  <th>
+                      <lightning-combobox data-index={item.Id}
+                                          value={item.Status__c} 
+                                          options={positionStatusValues}
+                                          onchange={handleFieldChange}>
+                      </lightning-combobox>
+                  </th>
+                  <th>
+                    <div>{item.Vacancy_opening_date__c}</div>
+                  </th>
+                  <th>
+                    <div>{item.Application_deadline__c}</div>
+                  </th>
+                  <th>
+                    <div>{item.Min_Salary__c}</div>
+                  </th>
+                  <th>
+                    <div>{item.Max_Salary__c}</div>
+                  </th>
+                </tr>
+              </template>
+            </template>
+          </tbody>
+        </table>
+      </div>
+      <template if:true={numberOfRecords} >
+        <div slot="footer">
+          <c-paginator2nd records-per-page={recordsPerPage}
+                          number-of-records={numberOfRecords} 
+                          onpagination={handlePagination}>
+                          </c-paginator2nd>
+        </div>
+      </template>
+    </lightning-card>
+</template>
