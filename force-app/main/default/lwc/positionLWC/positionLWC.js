@@ -27,7 +27,7 @@ export default class PositionLWC extends LightningElement {
     .then(result => {
         this.records = result;
         this.allRecords = result;
-      })
+    })
     .catch(error => {
         this.error = error;
     });
@@ -40,23 +40,23 @@ export default class PositionLWC extends LightningElement {
     getStatePicklistValues({data, error}) {
       if (data) {
         this.positionStatusValues = data.values;
-          console.log('positionStatusValues: ', data.values);
+        console.log('positionStatusValues: ', data.values);
         this.allStatusValues = [ { label: 'All', value: 'All' }, ...data.values ];
-          console.log('allStatusValues: ', this.allStatusValues);
+        console.log('allStatusValues: ', this.allStatusValues);
       } else if (error) {
         this.error = error;
-    }
+      }
   } 
 
   handleChange (event) {
     this.selectedValue = event.target.value;
     console.log('<------CHANGE STATUS ON---------> ', this.selectedValue);
     if(this.selectedValue === 'All'){
-        this.records = this.allRecords;
-    } else if(this.selectedValue !== 'All'){
-        this.records = this.allRecords.filter(element => {
-          return element.Status__c === this.selectedValue;
-        });
+      this.records = this.allRecords;
+    } else if (this.selectedValue !== 'All'){
+      this.records = this.allRecords.filter(element => {
+      return element.Status__c === this.selectedValue;
+      });
     }
       //setTimeout(() => {
       // this.template.querySelector("c-paginator").calculateTotalPages(); 
@@ -101,12 +101,12 @@ export default class PositionLWC extends LightningElement {
   get numberOfRecords() {
     if(this.records){
     console.log('GETTER  this.records.length: ', this.records.length);
-      return this.records.length;
+    return this.records.length;
     }
   }
   
   get recordsPerPage(){
-      return this._recordsPerPage;
+    return this._recordsPerPage;
   } 
   
   set recordsPerPage(value){
