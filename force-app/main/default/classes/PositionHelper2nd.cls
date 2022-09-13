@@ -11,10 +11,10 @@ public with sharing class PositionHelper2nd {
     public static List<Position__c> getRecordsByStatus(String selectStatus, integer offset) {
         String queryPosition = 'SELECT Name, Status__c, Vacancy_opening_date__c, Application_deadline__c, Min_Salary__c, Max_Salary__c ' 
                              + 'FROM Position__c ';
-          if (selectStatus != 'All') {
-                queryPosition += 'WHERE Status__c =: selectStatus ';
-              } 
-              queryPosition += 'ORDER BY Name ASC OFFSET :offset';
+        if (selectStatus != 'All') {
+            queryPosition += 'WHERE Status__c =: selectStatus ';
+        } 
+        queryPosition += 'ORDER BY Name ASC OFFSET :offset';
         return Database.query(queryPosition);                      
     }
      

@@ -34,7 +34,6 @@ export default class Paginator2nd extends LightningElement {
         console.log('child this.pageNo: ', this.pageNo);
         this.totalPages = Math.ceil(Number(this.numberOfRecords)/Number(this.recordsPerPage)); 
         console.log('child this.totalPages: ', this.totalPages); 
-        
         this.pageNumbers = Array(this.totalPages).fill().map((event, i) => i + 1);
         console.log('CHILD this.pageNumbers', this.pageNumbers);
     } 
@@ -62,7 +61,6 @@ export default class Paginator2nd extends LightningElement {
     preparePaginationList(){
         let offset = (this.pageNo-1)*this.recordsPerPage;
         console.log('child offset: ', offset);
-
         this.dispatchEvent(CustomEvent('pagination', {
             detail:{ offset : offset }
         }))
