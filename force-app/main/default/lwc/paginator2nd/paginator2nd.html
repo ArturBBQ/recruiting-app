@@ -1,7 +1,7 @@
 <template>
     <div slot="actions">
         <lightning-button
-            label="Prev"
+            label={label.prev}
             icon-name="utility:chevronleft"
             onclick={prevHandler}
             disabled={disablePrev}>
@@ -18,7 +18,7 @@
                 </div>
             </lightning-button-group>
         <lightning-button 
-            label="Next"
+            label={label.next}
             icon-name="utility:chevronright"
             icon-position="right"
             onclick={nextHandler}

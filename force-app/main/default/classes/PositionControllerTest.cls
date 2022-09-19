@@ -13,11 +13,7 @@ private class PositionControllerTest {
 
     @isTest
     static void testGetFilteredStatus() {
-        Position__c position1 = new Position__c(Name = 'Developer', Status__c = 'Open', Vacancy_opening_date__c = date.today());
-        insert position1;
-        Position__c position2 = new Position__c(Name = 'Admin', Status__c = 'Closed', Vacancy_opening_date__c = date.today().addDays(-91) );
-        insert position2;
-
+        Position__c[] positions = TestDataFactory.createPositions(4,'Open');
         PositionController pageCntrl = new PositionController();
         pageCntrl.selectStatus = 'Open';
 

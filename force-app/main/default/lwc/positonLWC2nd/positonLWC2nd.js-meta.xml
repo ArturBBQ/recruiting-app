@@ -9,7 +9,7 @@
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__AppPage, lightning__RecordPage, lightning__HomePage">
-            <property name="recordsPerPage" type="integer" label="Number of records"/>
+            <property name="recordsPerPage" type="integer" label="Number of records" min="2" max="20" default="5" required="true"/>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>
