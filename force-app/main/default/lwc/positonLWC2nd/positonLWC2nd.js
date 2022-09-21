@@ -9,6 +9,16 @@ import { getPicklistValues, getObjectInfo } from 'lightning/uiObjectInfoApi';
 import POSITION_OBJECT from '@salesforce/schema/Position__c';
 import STATUS_FIELD from '@salesforce/schema/Position__c.Status__c';
 
+import header from '@salesforce/label/c.Positions'; 
+import selectStatus from '@salesforce/label/c.Select_status';
+import save from '@salesforce/label/c.Save';
+import posName from '@salesforce/label/c.Position_Name'; 
+import status from '@salesforce/label/c.Status';
+import openDate from '@salesforce/label/c.Open_date';
+import closeDate from '@salesforce/label/c.Close_date';
+import minSalary from '@salesforce/label/c.Min_Salary';
+import maxSalary from '@salesforce/label/c.Max_salary';
+
 export default class PositonLWC2nd extends LightningElement {
     _wiredPositions;
     records;
@@ -26,6 +36,18 @@ export default class PositonLWC2nd extends LightningElement {
     @api numberOfRecords;
     @api recordsPerPage;
 
+    label = {
+      header,
+      selectStatus,
+      save,
+      posName,
+      status,
+      openDate,
+      closeDate,
+      minSalary,
+      maxSalary
+    };
+
     @wire( getObjectInfo, { objectApiName: POSITION_OBJECT } )
         objectInfo;
 
@@ -36,14 +58,22 @@ export default class PositonLWC2nd extends LightningElement {
               this.records = response.data;
               console.log('this.records: ', response.data);
               this.recordsToDisplay = response.data.slice(this.startIndex, this.recordsPerPage);
-              console.log('this.recordsToDisplay: ', data.slice(this.startIndex, this.recordsPerPage));
+              console.log('this.recordsToDisplay: ', this.recordsToDisplay);
           } else if (response.error) {
               this.error = response.error;
+              console.log('@wire(getPositionList) error: ', this.error);
+              this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error',
+                    message: 'Couldn`t find data',
+                    variant: 'error'
+                })
+              );
           }
     } 
 
     @wire( getPicklistValues, { recordTypeId: "$objectInfo.data.defaultRecordTypeId", fieldApiName: STATUS_FIELD } )
-      getStatePicklistValues({data, error}) {
+      getStatusPicklistValues({data, error}) {
         if (data) {
             this.positionStatusValues = data.values;
             console.log('this.positionStatusValues: ', this.positionStatusValues)
@@ -51,6 +81,14 @@ export default class PositonLWC2nd extends LightningElement {
             console.log('this.allStatusValues: ', this.allStatusValues)
         } else if (error) {
             this.error = error;
+            console.log('@wire(getPicklistValues) error: ', this.error);
+            this.dispatchEvent(
+              new ShowToastEvent({
+                  title: 'Error',
+                  message: 'Couldn`t find data from picklist',
+                  variant: 'error'
+              })
+            );
         }
     }
 
@@ -84,8 +122,15 @@ export default class PositonLWC2nd extends LightningElement {
               }) 
          })
         .catch((error) => { 
-          this.errorMessage=error;
-            console.log('unable to update the record' + this.errorMessage);
+            this.errorMessage=error;
+            console.log('unable to update the records ', this.errorMessage);
+            this.dispatchEvent(
+              new ShowToastEvent({
+                  title: 'Error',
+                  message: 'Unable to update the records',
+                  variant: 'error'
+              })
+            );
         })
     }
 
@@ -116,6 +161,13 @@ export default class PositonLWC2nd extends LightningElement {
           .catch(error => {
             this.error = error;
             console.log('error ', error);
+            this.dispatchEvent(
+              new ShowToastEvent({
+                  title: 'Error',
+                  message: 'Unable to filter the records',
+                  variant: 'error'
+              })
+            );
           });
     }
 
@@ -131,6 +183,14 @@ export default class PositonLWC2nd extends LightningElement {
           })
           .catch(error => {
             this.error = error;
+            console.log('error ', error);
+            this.dispatchEvent(
+              new ShowToastEvent({
+                  title: 'Error',
+                  message: 'Unable to paginate the records',
+                  variant: 'error'
+              })
+            );
           });
     }
     

@@ -2,40 +2,40 @@
     <lightning-card>
       <div class="slds-box">
         <div class="slds-text-color_inverse slds-text-heading_large" style="padding: 5px; background:#16325c">        
-            Positions
+            {label.header}
         </div> 
         <div style="width:200px; padding:10px;">
           <lightning-combobox name="filter"
-                              label="Status"
+                              label={label.selectStatus}
                               value={selectedValue}
                               options={allStatusValues}
                               onchange={handleFilteredStatus}>
           </lightning-combobox>
         </div>
         <div slot="footer" style=" padding: 5px;">
-          <lightning-button variant="brand" type="submit" label="Save" onclick={updateStatus}>
+          <lightning-button variant="brand" type="submit" label={label.save} onclick={updateStatus}>
           </lightning-button>
         </div> 
         <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
           <thead>
             <tr class="slds-line-height_reset">
               <th class="" scope="col">
-                <div class="slds-truncate" title="Position Name">Position Name</div>
+                <div class="slds-truncate" title="Position Name">{label.posName}</div>
               </th>
               <th class="" scope="col">
-                <div class="slds-truncate" title="Status">Status</div>
+                <div class="slds-truncate" title="Status">{label.status}</div>
               </th>
               <th class="" scope="col">
-                <div class="slds-truncate" title="Open date">Open date</div>
+                <div class="slds-truncate" title="Open date">{label.openDate}</div>
               </th>
               <th class="" scope="col">
-                <div class="slds-truncate" title="Close date">Close date</div>
+                <div class="slds-truncate" title="Close date">{label.closeDate}</div>
               </th>
               <th class="" scope="col">
-                <div class="slds-truncate" title="Min salary">Min salary</div>
+                <div class="slds-truncate" title="Min salary">{label.minSalary}</div>
               </th>
               <th class="" scope="col">
-                <div class="slds-truncate" title="Max salary">Max salary</div>
+                <div class="slds-truncate" title="Max salary">{label.maxSalary}</div>
               </th>
             </tr>
         </thead>
