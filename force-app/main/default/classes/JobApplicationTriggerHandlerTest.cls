@@ -1,7 +1,7 @@
 @isTest
-private class TestHiredJobApplicationTrigger {
+private class JobApplicationTriggerHandlerTest {
     @isTest
-    static void TestHiredJobApplicationTrigger() {
+    static void changeJobApplicationStatusTest() {
         Position__c position = new Position__c(Name = 'Test Position', Status__c = 'Open');                                      
         insert position;
         Candidate__c candidate = new Candidate__c(Name = 'Test Name', First_Name__c = 'Test FName');

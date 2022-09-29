@@ -1,7 +1,7 @@
 @isTest
-private class TestChangePositionStatusTrigger {
+private class PositionTriggerHandlerTest {
     @isTest
-    static void TestChangePositionStatus() {
+    static void changePositionStatusTest() {
         Position__c position = new Position__c(Name = 'Test Position', Status__c = 'Open', Application_deadline__c = System.today().addDays(5));
         insert position;
         position.Status__c = 'Closed';
