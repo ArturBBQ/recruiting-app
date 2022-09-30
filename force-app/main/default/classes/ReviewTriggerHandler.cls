@@ -1,14 +1,14 @@
 public with sharing class ReviewTriggerHandler {
-    public static void countReviewTriggerHandler(List<Review__c> reviewList) {
+    public static void countReview(List<Review__c> reviewList) {
         Set<Id> jaIds = new Set<Id>();
         Decimal averageRating;
 
         for(Review__c review : reviewList){
             jaIds.add(review.Job_Application__c);
         }
-        List<AggregateResult> groupedRes = [SELECT AVG(Rating__c)ar FROM Review__c WHERE Job_Application__c IN: jaIds];
+        List<AggregateResult> groupedRes = [SELECT Job_Application__c, AVG(Rating__c)ar FROM Review__c WHERE Job_Application__c IN: jaIds GROUP BY Job_Application__c];
         for(AggregateResult aggRes : groupedRes){
-                averageRating = (Decimal)aggRes.get('ar'); 
+            averageRating = (Decimal)aggRes.get('ar'); 
         }
         List<Job_Application__c> jaList = new List<Job_Application__c>();
         List<Job_Application__c> jobAppList = [SELECT Id, Name, Average_rating__c, Number_of_reviews__c, (SELECT Id, Rating__c FROM Reviews__r) 

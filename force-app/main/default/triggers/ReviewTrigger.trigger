@@ -1,7 +1,7 @@
-trigger ReviewTrigger on Review__c (after insert, after update, after delete, after undelete) {
+trigger ReviewTrigger on Review__c (after insert, after update, after delete) {
     if (Trigger.isAfter && Trigger.isDelete){
-        ReviewTriggerHandler.countReviewTriggerHandler(Trigger.Old);
-    } else {
-        ReviewTriggerHandler.countReviewTriggerHandler(Trigger.New);
+        ReviewTriggerHandler.countReview(Trigger.Old);
+    } else if (Trigger.isAfter && (Trigger.isInsert || Trigger.isUpdate)){
+        ReviewTriggerHandler.countReview(Trigger.New);
     }   
 }
