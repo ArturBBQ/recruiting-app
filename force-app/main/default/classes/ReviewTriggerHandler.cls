@@ -7,16 +7,14 @@ public with sharing class ReviewTriggerHandler {
             jaIds.add(review.Job_Application__c);
         }
 
-        List<Job_Application__c> jaList = new List<Job_Application__c>();
-
-        Map<Id, Job_Application__c> jaMap = new Map<Id, Job_Application__c>();
-        List<AggregateResult> groupedRes = [SELECT Job_Application__c, AVG(Rating__c)ar FROM Review__c WHERE Job_Application__c IN: jaIds GROUP BY Job_Application__c];
-        for(AggregateResult aggRes : groupedRes){
-            averageRating = (Decimal)aggRes.get('ar'); 
-            Job_Application__c ja = new Job_Application__c();
-            jaMap.put((Id)aggRes.get('Job_Application__c'), ja);
+        Map<Id, Decimal> jaMap = new Map<Id, Decimal>();
+        List<AggregateResult> groupedRes = [SELECT Job_Application__c, AVG(Rating__c)avRating FROM Review__c WHERE Job_Application__c IN: jaIds GROUP BY Job_Application__c];
+        for(AggregateResult ar : groupedRes){
+            averageRating = (Decimal)ar.get('avRating');
+            jaMap.put((Id)ar.get('Job_Application__c'), (Decimal)ar.get('avRating'));
         }
 
+        List<Job_Application__c> jaList = new List<Job_Application__c>();
         List<Job_Application__c> jobAppList = [SELECT Id, Name, Average_rating__c, Number_of_reviews__c, (SELECT Id, Rating__c FROM Reviews__r) 
                                                FROM Job_Application__c 
                                                WHERE Id IN :jaIds];
