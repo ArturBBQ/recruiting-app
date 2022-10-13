@@ -38,3 +38,8 @@ $RECYCLE.BIN/
 
 # Local environment variables
 .env
+force-app/main/default/classes/AccountContactTriggerHandler.cls
+force-app/main/default/classes/AccountContactTriggerHandler.cls-meta.xml
+force-app/main/default/triggers/AccountContactTrigger.trigger
+force-app/main/default/triggers/AccountContactTrigger.trigger-meta.xml
+force-app/main/default/triggers/Trigger2realization.trigger
