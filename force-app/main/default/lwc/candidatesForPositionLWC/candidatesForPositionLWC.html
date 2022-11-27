@@ -1,0 +1,46 @@
+<!-- sldsValidatorIgnore -->
+<template>
+    <template if:true={isProfileAdmin}>
+        <lightning-button variant="brand" label="Admin settings" title="Primary action" 
+                          onclick={handleConfig} class="slds-m-left_x-small">
+        </lightning-button>
+    </template>
+      <c-admin-settings-modal></c-admin-settings-modal>
+        <template if:true={visibleRecords}>
+            <lightning-layout multiple-rows="true">
+                <template for:each={visibleRecords} for:item="item">
+                    <lightning-layout-item padding="around-small" key={item.Id} size="6">
+                    <div class="my-card">
+                        <lightning-card class="slds-p-horizontal_small" variant="Narrow"
+                                        data-id={item.Candidate__c} onclick={handleModal} icon-name="custom:custom15">
+                            <a data-id={item.Candidate__c} onclick={navigateToCandidatePage} slot="title">
+                                {item.Candidate__r.Name} {item.Candidate__r.First_Name__c}
+                            </a>
+                            <lightning-record-edit-form record-id={item.Candidate__c} object-api-name={candidateObjectApiName}>
+                                <div class="slds-grid slds-wrap">
+                                    <template if:true={shortCandidateFieldSet}>
+                                        <template for:each={shortCandidateFieldSet} for:item="f">
+                                            <div key={f.key} class="slds-col slds-size_1-of-2">
+                                                <lightning-output-field field-name={f.value}>
+                                                    </lightning-output-field>
+                                            </div>
+                                        </template>
+                                    </template>
+                                </div>
+                            </lightning-record-edit-form>
+                        </lightning-card>
+                    </div>
+                    </lightning-layout-item>
+                </template>
+            </lightning-layout>
+                <template if:true={numberOfRecords}>
+                    <div class="paginator" slot="footer">
+                        <c-paginator records-per-page={recordsPerPage} 
+                                    number-of-records={numberOfRecords} 
+                                    onpagination={handlePagination}>
+                            </c-paginator>
+                    </div>
+                </template>
+        </template>
+      <c-candidate-modal> </c-candidate-modal>
+</template>
