@@ -1,33 +1,29 @@
 import { LightningElement, api } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import getFieldsetApiNames from '@salesforce/apex/AdminSettingsControllerLWC.getFieldsetApiNames';
-import getProfileApiNames from '@salesforce/apex/AdminSettingsControllerLWC.getProfileApiNames';
+import getFieldSetApiNames from '@salesforce/apex/AdminSettingsControllerLWC.getFieldSetApiNames';
+import getFieldSetsByProfile from '@salesforce/apex/AdminSettingsControllerLWC.getFieldSetsByProfile';
 import getFieldSetForm from '@salesforce/apex/CandidatesForPositionHelper.getFieldSetForm';
-import getCurrentFieldSets from '@salesforce/apex/AdminSettingsControllerLWC.getCurrentFieldSets';
+import getCurrentMetadataFieldSets from '@salesforce/apex/CandidatesForPositionHelper.getCurrentMetadataFieldSets';
 import updateCustomMetadataRecords from '@salesforce/apex/AdminSettingsControllerLWC.updateCustomMetadataRecords';
 
 export default class AdminSettingsModal extends LightningElement {
     
   ShowModal = false;
-  profileValue;
-  profileApiNames = [];
   modifiedMetadataRecords = {};
+  profileApiNames = [];
+  error;
+  profileValueInCombobox;
   currentFieldSetInCard;
   currentFieldSetInModal;
   currentFieldSetInModalJobApp;
-  currentCheckboxValue = false;
-  canFieldsets = [];
-  jobAppFieldsets=[];
-  cardFieldsetValue;
-  modalFieldsetValue;
-  jobAppFielsetValue;
   existFieldsCard = [];
   existFieldsModal = [];
   existFieldsJobAppModal = [];  
-  error;
+  candidateFieldSetsOptions = [];
+  jobAppFieldSetsOptions = [];
 
   @api
-  handleAdminSettings(){
+  handleAdminSettings() {
     this.ShowModal = true;
     this.profileApis();
   }
@@ -37,17 +33,16 @@ export default class AdminSettingsModal extends LightningElement {
   }
 
   profileApis() {
-    getProfileApiNames()
+    getFieldSetsByProfile()
     .then(result => {
-      this.modifiedMetadataRecords = JSON.parse(JSON.stringify(result));
       let options = [];
       if (result) {
-          for(let key in result){
-            options.push({label:key, value:key});
-          }
-        this.profileApiNames = options;
-        console.log(' profileApiNames options '+JSON.stringify(options));
+        for(let key in result){
+          options.push({label:key, value:key});
+        }
+       this.profileApiNames = options;
       }
+      this.modifiedMetadataRecords = JSON.parse(JSON.stringify(result));
     })
     .catch(error => {
       this.error = error;
@@ -55,15 +50,14 @@ export default class AdminSettingsModal extends LightningElement {
   }   
 
   handleProfile(event) {
-    console.log('profileValue '+ event.detail.value);
-    this.profileValue = event.detail.value;
+    this.profileValueInCombobox = event.detail.value;
     this.currentFieldSets();
     this.candidateFieldSetOptions();
     this.jobAppFieldSetOptions();
   }
 
-  currentFieldSets(){
-    getCurrentFieldSets({profileApiName : this.profileValue})
+  currentFieldSets() {
+    getCurrentMetadataFieldSets({ profileApiName : this.profileValueInCombobox })
     .then((result) => {
       this.currentFieldSetInCard = result[0].Candidate_Fieldset_in_Card__c;
       this.fieldSetFormInCard();
@@ -71,17 +65,16 @@ export default class AdminSettingsModal extends LightningElement {
       this.fieldSetFormInModal();
       this.currentFieldSetInModalJobApp = result[0].Job_Application_Fieldset_in_Modal__c;
       this.fieldSetFormInModalJobApp();
-      this.currentCheckboxValue = result[0].Inaccessible_fields__c;
     })
     .catch((error) => {
       this.error = error;
     });
   }
 
-  fieldSetFormInCard(){
+  fieldSetFormInCard() {
     getFieldSetForm({ objectName: 'Candidate__c', fieldSetName: this.currentFieldSetInCard })
     .then((result) => {
-      this.existFieldsCard = result;
+      this.existFieldsCard = JSON.parse(JSON.stringify(result));
       for(let key in result) {
         if (result.hasOwnProperty(key)) { 
             this.existFieldsCard.push({value:result[key], key:key});
@@ -96,7 +89,7 @@ export default class AdminSettingsModal extends LightningElement {
   fieldSetFormInModal(){
     getFieldSetForm({ objectName: 'Candidate__c', fieldSetName: this.currentFieldSetInModal })
     .then((result) => {
-      this.existFieldsModal = result;
+      this.existFieldsModal = JSON.parse(JSON.stringify(result));
       for(let key in result) {
         if (result.hasOwnProperty(key)) { 
             this.existFieldsModal.push({value:result[key], key:key});
@@ -108,10 +101,10 @@ export default class AdminSettingsModal extends LightningElement {
     }); 
   }
 
-  fieldSetFormInModalJobApp(){
+  fieldSetFormInModalJobApp() {
     getFieldSetForm({ objectName: 'Job_Application__c', fieldSetName: this.currentFieldSetInModalJobApp })
     .then((result) => {
-      this.existFieldsJobAppModal = result;
+      this.existFieldsJobAppModal = JSON.parse(JSON.stringify(result));
       for(let key in result) {
         if (result.hasOwnProperty(key)) { 
             this.existFieldsJobAppModal.push({value:result[key], key:key});
@@ -124,7 +117,7 @@ export default class AdminSettingsModal extends LightningElement {
   }
   
   candidateFieldSetOptions() {
-    getFieldsetApiNames({ objectName: 'Candidate__c' })
+    getFieldSetApiNames({ objectName: 'Candidate__c' })
     .then((result) => {
       let options = [];
       if (result) {
@@ -133,8 +126,7 @@ export default class AdminSettingsModal extends LightningElement {
                            value: (element[0].toUpperCase() + element.slice(1)) }) 
           });
       }
-      this.canFieldsets = options;
-      console.log('canFieldsets ====>'+ JSON.stringify(options));
+      this.candidateFieldSetsOptions = options;
     })
     .catch((error) => {
       this.error = error;
@@ -142,7 +134,7 @@ export default class AdminSettingsModal extends LightningElement {
   }
   
   jobAppFieldSetOptions() {
-    getFieldsetApiNames({ objectName: 'Job_Application__c' })
+    getFieldSetApiNames({ objectName: 'Job_Application__c' })
     .then((result) => {
       let options = [];
       if (result) {
@@ -151,55 +143,44 @@ export default class AdminSettingsModal extends LightningElement {
                              value: (element[0].toUpperCase() + element.slice(1)) }) 
           });
       }
-      this.jobAppFieldsets = options;
-      console.log('jobAppFieldsets ====>'+ JSON.stringify(options));
+      this.jobAppFieldSetsOptions = options;
     })
     .catch((error) => {
       this.error = error;
     });
   }
 
-  handleCardFieldset(event){
+  handleCardFieldset(event) {
     this.currentFieldSetInCard = event.detail.value;
-    // let profileApi = this.profileValue;
-    if(this.profileValue === 'Recruiter') {
+    if(this.profileValueInCombobox === 'Recruiter') {
       this.modifiedMetadataRecords.Recruiter.Candidate_Fieldset_in_Card__c = this.currentFieldSetInCard;
-    } else if (this.profileValue === 'Interviewer') {
+    } else if (this.profileValueInCombobox === 'Interviewer') {
       this.modifiedMetadataRecords.Interviewer.Candidate_Fieldset_in_Card__c = this.currentFieldSetInCard;
     }
     this.fieldSetFormInCard();
   }
 
-  handleModalFieldset(event){
+  handleModalFieldset(event) {
     this.currentFieldSetInModal = event.detail.value;
-    if(this.profileValue === 'Recruiter') {
+    if(this.profileValueInCombobox === 'Recruiter') {
       this.modifiedMetadataRecords.Recruiter.Candidate_Fieldset_in_Modal__c = this.currentFieldSetInModal;
-    } else if (this.profileValue === 'Interviewer') {
+    } else if (this.profileValueInCombobox === 'Interviewer') {
       this.modifiedMetadataRecords.Interviewer.Candidate_Fieldset_in_Modal__c = this.currentFieldSetInModal;
     }
     this.fieldSetFormInModal();
   }
 
-  handleJobAppFieldset(event){
+  handleJobAppFieldset(event) {
     this.currentFieldSetInModalJobApp = event.detail.value;
-    if(this.profileValue === 'Recruiter') {
+    if(this.profileValueInCombobox === 'Recruiter') {
       this.modifiedMetadataRecords.Recruiter.Job_Application_Fieldset_in_Modal__c = this.currentFieldSetInModalJobApp;
-    } else if (this.profileValue === 'Interviewer') {
+    } else if (this.profileValueInCombobox === 'Interviewer') {
       this.modifiedMetadataRecords.Interviewer.Job_Application_Fieldset_in_Modal__c = this.currentFieldSetInModalJobApp;
     }
     this.fieldSetFormInModalJobApp();
   }
 
-  checkboxChangeHandler(event) {
-    this.currentRecruiterCheckboxValue = event.target.checked;
-    if(this.profileValue === 'Recruiter') {
-      this.modifiedMetadataRecords.Recruiter.Inaccessible_fields__c = this.currentRecruiterCheckboxValue;
-    } else if (this.profileValue === 'Interviewer') {
-      this.modifiedMetadataRecords.Interviewer.Inaccessible_fields__c = this.currentRecruiterCheckboxValue;
-    }
-  }
-
-  updateRecords() {
+  updateMetadataRecords() {
     updateCustomMetadataRecords ({ customMetadataRecords: this.modifiedMetadataRecords })
       .then (result => {
         console.log('Result after save===> ' + result);
@@ -210,6 +191,7 @@ export default class AdminSettingsModal extends LightningElement {
                 variant: 'success'
             })
         );
+        this.closeModal();
       })
       .catch (error => {
         console.log('Error after save===> ' + error);
@@ -219,7 +201,7 @@ export default class AdminSettingsModal extends LightningElement {
               message: 'Couldn`t update',
               variant: 'error'
           })
-      );
+        );
       })
   }
 

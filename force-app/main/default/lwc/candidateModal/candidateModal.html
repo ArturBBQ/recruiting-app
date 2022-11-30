@@ -1,6 +1,6 @@
 <!-- sldsValidatorIgnore -->
 <template> 
-    <!-- modal start -->
+  <!-- modal start -->
     <template if:true={ShowModal}>
         <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" class="slds-modal slds-fade-in-open" >
             <template if:true={candidate}>
@@ -27,33 +27,33 @@
                         <div class="slds-modal__content slds-p-around_medium" >
                             <lightning-tabset>
                                 <lightning-tab label="Сandidate details">                                        
-                                    <lightning-record-view-form record-id={candidateId} object-api-name={candidateObjectApiName}>
+                                    <lightning-record-view-form record-id={candidateId} object-api-name='Candidate__c'>
                                         <div class="slds-grid slds-wrap">
-                                        <template if:true={longCandidateFieldSet}>
-                                            <template for:each={longCandidateFieldSet} for:item="f">
-                                                <div key={f.Id} class="slds-col slds-size_1-of-2">
-                                                    <lightning-output-field field-name={f.value}>
-                                                    </lightning-output-field>
-                                                </div>
+                                            <template if:true={candidateModalFieldSetFields}>
+                                                <template for:each={candidateModalFieldSetFields} for:item="f">
+                                                    <div key={f.Id} class="slds-col slds-size_1-of-2">
+                                                        <lightning-output-field field-name={f.value}>
+                                                        </lightning-output-field>
+                                                    </div>
+                                                </template>
                                             </template>
-                                        </template>
                                         </div>
                                     </lightning-record-view-form>
                                 </lightning-tab>
                                 <lightning-tab label="Related Job Applications">
-                                    <template if:true={jobApp}>
-                                        <template for:each={jobApp} for:item="jobApp">
+                                    <template if:true={jobAppsByCandidate}>
+                                        <template for:each={jobAppsByCandidate} for:item="jobApp">
                                             <div key={jobApp.Id} class="my-ja-card" onclick={navigateToJobAppPage} data-id={jobApp.Id}>
-                                                <lightning-record-view-form record-id={jobApp.Id} object-api-name={jaObjectApiName}>
+                                                <lightning-record-view-form record-id={jobApp.Id} object-api-name='Job_Application__c'>
                                                     <div class="slds-grid slds-wrap">
-                                                    <template if:true={jaFieldSet}>
-                                                        <template for:each={jaFieldSet} for:item="f">
-                                                            <div key={f.Id} class="slds-col slds-size_1-of-2">
-                                                                <lightning-output-field field-name={f.value}>
-                                                                </lightning-output-field>
-                                                            </div>
+                                                        <template if:true={jaFieldSetFields}>
+                                                            <template for:each={jaFieldSetFields} for:item="f">
+                                                                <div key={f.Id} class="slds-col slds-size_1-of-2">
+                                                                    <lightning-output-field field-name={f.value}>
+                                                                    </lightning-output-field>
+                                                                </div>
+                                                            </template>
                                                         </template>
-                                                    </template>
                                                     </div>
                                                 </lightning-record-view-form>     
                                             </div>
@@ -62,16 +62,16 @@
                                 </lightning-tab>
                             </lightning-tabset>
                         </div>
-                        <!-- modal footer start-->
-                        <footer class="slds-modal__footer">
-                            <lightning-button label="Cancel" title="Non-primary action" onclick={closeModal} class="slds-var-m-left_x-small">
-                            </lightning-button>
-                        </footer>
+                     <!-- modal footer start-->
+                      <footer class="slds-modal__footer">
+                        <lightning-button label="Cancel" title="Non-primary action" 
+                                          onclick={closeModal} class="slds-var-m-left_x-small">
+                        </lightning-button>
+                      </footer>
                     </div>
                 </template>
             </template>
         </section>
             <div class="slds-backdrop slds-backdrop_open"></div>
     </template>
-    <!-- modal end -->
 </template>

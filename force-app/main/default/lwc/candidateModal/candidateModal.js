@@ -2,32 +2,30 @@ import { LightningElement, api } from 'lwc';
 import getFieldSetForm from '@salesforce/apex/CandidatesForPositionHelper.getFieldSetForm';
 import getCandidateForModal from '@salesforce/apex/CandidatesForPositionHelper.getCandidateForModal';
 import getJobAppByCandidate from '@salesforce/apex/CandidatesForPositionHelper.getJobAppByCandidate';
+import getCurrentMetadataFieldSets from '@salesforce/apex/CandidatesForPositionHelper.getCurrentMetadataFieldSets';
 import { NavigationMixin } from 'lightning/navigation';
 
 export default class CandidateModal extends NavigationMixin(LightningElement) {
 
-    @api candidateId;
-    @api candidateObjectApiName = 'Candidate__c';
-    @api jaObjectApiName = 'Job_Application__c';
-    @api candidateLongFieldSet = 'Candidate_modal_recruiter';
-    @api jobAppFieldSet = 'Job_App_recruiter';
+    candidateId;
     ShowModal = false;
     candidate;
-    longCandidateFieldSet = [];
-    jaFieldSet = [];
-    jobApp;
-    jaId;
     error;
+    jobAppsByCandidate;
+    @api profileNameAccessing;
+    candidateModalFieldsetName;
+    jobAppModalFieldsetName;
+    candidateModalFieldSetFields = [];
+    jaFieldSetFields = [];
+    jobAppId;
     
     @api 
     handleCandidateModal(event) {
-        console.log('CHILD event (id)' + event);
         this.candidateId = event;
         this.ShowModal = true;
         this.candidateForModal();
-        this.getLongCandidateInfo();
         this.jaListbyCandidate();
-        this.getJobAppInfo();
+        this.currentMetadataFieldSets();
     }
 
     candidateForModal() {
@@ -40,43 +38,55 @@ export default class CandidateModal extends NavigationMixin(LightningElement) {
         });
     }
 
-    getLongCandidateInfo() {
-        getFieldSetForm ({ objectName: this.candidateObjectApiName, fieldSetName: this.candidateLongFieldSet })
-        .then(result => {
-            this.longCandidateFieldSet = result;
-            for(let key in result) {
-                if (result.hasOwnProperty(key)) { 
-                    this.longCandidateFieldSet.push({value:result[key], key:key});
-                }
-            }
-        }) 
-        .catch(error => {
-            this.error = error;
-        });
-    }
-
     jaListbyCandidate() {
         getJobAppByCandidate({ candidateId: this.candidateId })
         .then(result => {
-            this.jobApp = result;
+            this.jobAppsByCandidate = result;
         })
         .catch(error => {
             this.error = error;
         });
     }
 
-    getJobAppInfo() {
-        getFieldSetForm({ objectName: this.jaObjectApiName, fieldSetName: this.jobAppFieldSet })
+    currentMetadataFieldSets() {
+        getCurrentMetadataFieldSets({ profileApiName: this.profileNameAccessing })
+            .then((result) => {
+                this.candidateModalFieldsetName = result[0].Candidate_Fieldset_in_Modal__c;
+                this.getModalCandidateInfo();
+                this.jobAppModalFieldsetName = result[0].Job_Application_Fieldset_in_Modal__c;
+                this.getJobAppInfo();
+            })
+            .catch((error) => {
+                this.error = error;
+            });
+    }
+
+    getModalCandidateInfo() {
+        getFieldSetForm ({ objectName: 'Candidate__c', fieldSetName: this.candidateModalFieldsetName })
         .then(result => {
-            this.jaFieldSet = result;
+            this.candidateModalFieldSetFields = JSON.parse(JSON.stringify(result));
             for(let key in result) {
                 if (result.hasOwnProperty(key)) { 
-                    this.jaFieldSet.push({value:result[key], key:key});
+                    this.candidateModalFieldSetFields.push({value:result[key], key:key});
                 }
             }
         }) 
         .catch(error => {
-            console.log('error:'+ error);
+            this.error = error;
+        });
+    }
+
+    getJobAppInfo() {
+        getFieldSetForm({ objectName: 'Job_Application__c', fieldSetName: this.jobAppModalFieldsetName })
+        .then(result => {
+            this.jaFieldSetFields = JSON.parse(JSON.stringify(result));
+            for(let key in result) {
+                if (result.hasOwnProperty(key)) { 
+                    this.jaFieldSetFields.push({value:result[key], key:key});
+                }
+            }
+        }) 
+        .catch(error => {
             this.error = error;
         });
     }
@@ -98,11 +108,11 @@ export default class CandidateModal extends NavigationMixin(LightningElement) {
     }
     
     navigateToJobAppPage(event) {
-        this.jaId = event.currentTarget.dataset.id;
+        this.jobAppId = event.currentTarget.dataset.id;
         this[NavigationMixin.Navigate]({
             type: 'standard__recordPage',
             attributes: {
-                recordId: this.jaId,
+                recordId: this.jobAppId,
                 objectApiName: 'Job_Application__c',
                 actionName: 'view'
             }

@@ -4,19 +4,20 @@ import USER_ID from '@salesforce/user/Id';
 import USERPROFILE_NAME from '@salesforce/schema/User.Profile.Name';
 import getCandidatesList from '@salesforce/apex/CandidatesForPositionHelper.getCandidatesList';
 import getFieldSetForm from '@salesforce/apex/CandidatesForPositionHelper.getFieldSetForm';
+import getCurrentMetadataFieldSets from '@salesforce/apex/CandidatesForPositionHelper.getCurrentMetadataFieldSets';
 import { NavigationMixin } from 'lightning/navigation';
 
 export default class CandidatesForPositionLWC extends NavigationMixin(LightningElement) {
 
     @api recordId;
-    @api candidateId;
-    @api candidateObjectApiName = 'Candidate__c';
-    @api candidateShortFieldSet = 'Candidate_card_recruiter';
-    candidateCards;
+    candidateId;
+    candidateCardFieldsetName;
+    candidateCards = [];
     error;
-    shortCandidateFieldSet = [];
+    candidateCardFieldSetFields = [];
     userProfileName;
-    isProfileAdmin = false;
+    isProfileAdmin;
+    profileNameAccessing;
     
     //variables for pagination
     @api numberOfRecords;
@@ -25,44 +26,66 @@ export default class CandidatesForPositionLWC extends NavigationMixin(LightningE
     startIndex = 0;
     endIndex;
 
-    @wire(getRecord, { recordId: USER_ID, fields: [USERPROFILE_NAME]}) 
-        userDetails({error, data}) {
-        if (data) {
-                this.userProfileName = data.fields.Profile.value.fields.Name.value;
-                console.log('this.userProfileName:'+ this.userProfileName);
-                this.checkUser();
-        }
-    }
-
-    checkUser(){
-        if(this.userProfileName === 'System Administrator'){
-            this.isProfileAdmin = true;
-        }
-    }
-
     connectedCallback() {
         this.candidateList();
-        this.getShortCandidateInfo();
     }
   
     candidateList() {
-        getCandidatesList({recordId: this.recordId})
-        .then(result => {
-            this.candidateCards = result;
-            console.log('candidateCards:'+ JSON.stringify(result));
+        getCandidatesList({ recordId: this.recordId })
+        .then(data => {
+            this.candidateCards = data;
         })
         .catch(error => {
             this.error = error;
         });
     }
 
-    getShortCandidateInfo() {
-        getFieldSetForm ({ objectName: this.candidateObjectApiName, fieldSetName: this.candidateShortFieldSet})
+    @wire(getRecord, { recordId: USER_ID, fields: [USERPROFILE_NAME] }) 
+        userDetails({error, data}) {
+        if (data) {
+            this.userProfileName = data.fields.Profile.value.fields.Name.value;
+            this.checkUserForConfigButton();
+            this.checkUserForShowDetailInCard();
+        } else if(error) {
+            this.error = error;
+        }
+    }
+
+    checkUserForConfigButton() {
+        if(this.userProfileName === 'System Administrator') {
+            this.isProfileAdmin = true;
+        } else {
+            this.isProfileAdmin = false;
+        }
+    }
+
+    checkUserForShowDetailInCard() {
+        if(this.userProfileName === 'Recruiter' || this.userProfileName === 'System Administrator') {
+            this.profileNameAccessing = 'Recruiter';
+        } else if (this.userProfileName === 'Interviewer') {
+            this.profileNameAccessing = 'Interviewer';
+        }
+        this.currentMetadataFieldSets();
+    }
+
+    currentMetadataFieldSets() {
+        getCurrentMetadataFieldSets({ profileApiName: this.profileNameAccessing })
+            .then((result) => {
+                this.candidateCardFieldsetName = result[0].Candidate_Fieldset_in_Card__c;
+                this.cardCandidateInfo();
+            })
+            .catch((error) => {
+                this.error = error;
+            });
+    }
+
+    cardCandidateInfo() {
+        getFieldSetForm ({ objectName: 'Candidate__c', fieldSetName: this.candidateCardFieldsetName })
         .then(result => {
-            this.shortCandidateFieldSet = result;
+            this.candidateCardFieldSetFields = JSON.parse(JSON.stringify(result));
             for(let key in result) {
                 if (result.hasOwnProperty(key)) { 
-                    this.shortCandidateFieldSet.push({value:result[key], key:key});
+                    this.candidateCardFieldSetFields.push({value:result[key], key:key});
                 }
             }
         }) 
@@ -71,7 +94,7 @@ export default class CandidatesForPositionLWC extends NavigationMixin(LightningE
         });
     }
 
-    handleConfig(){
+    handleConfig() {
         this.template.querySelector("c-admin-settings-modal").handleAdminSettings();
     }
 
@@ -92,29 +115,29 @@ export default class CandidatesForPositionLWC extends NavigationMixin(LightningE
         });
     }
 
-    handlePagination(event){
+    handlePagination(event) {
         this.startIndex = event.detail.start;
         this.endIndex = event.detail.end;
     }
 
     get visibleRecords() {
-        if(this.candidateCards){
+        if(this.candidateCards) {
             return this.candidateCards.slice(this.startIndex, this.endIndex);
         }
     }
 
     get numberOfRecords() {
-        if(this.candidateCards){
+        if(this.candidateCards) {
             return this.candidateCards.length;
         }
     }
 
-    get recordsPerPage(){
+    get recordsPerPage() {
         return this._recordsPerPage;
     } 
       
-    set recordsPerPage(value){
-        if(value){
+    set recordsPerPage(value) {
+        if(value) {
             this._recordsPerPage = value;
             this.endIndex = value;
         }
