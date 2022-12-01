@@ -2,9 +2,10 @@ import { LightningElement, api } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getFieldSetApiNames from '@salesforce/apex/AdminSettingsControllerLWC.getFieldSetApiNames';
 import getFieldSetsByProfile from '@salesforce/apex/AdminSettingsControllerLWC.getFieldSetsByProfile';
+import getCurrentMetadataProfiles from '@salesforce/apex/AdminSettingsControllerLWC.getCurrentMetadataProfiles';
 import getFieldSetForm from '@salesforce/apex/CandidatesForPositionHelper.getFieldSetForm';
 import getCurrentMetadataFieldSets from '@salesforce/apex/CandidatesForPositionHelper.getCurrentMetadataFieldSets';
-import updateCustomMetadataRecords from '@salesforce/apex/AdminSettingsControllerLWC.updateCustomMetadataRecords';
+import updateCustomMetadataFieldSetSettings from '@salesforce/apex/AdminSettingsControllerLWC.updateCustomMetadataFieldSetSettings';
 
 export default class AdminSettingsModal extends LightningElement {
     
@@ -26,6 +27,7 @@ export default class AdminSettingsModal extends LightningElement {
   handleAdminSettings() {
     this.ShowModal = true;
     this.profileApis();
+    this.fieldSetsByProfile();
   }
   
   closeModal() {
@@ -33,21 +35,30 @@ export default class AdminSettingsModal extends LightningElement {
   }
 
   profileApis() {
-    getFieldSetsByProfile()
+    getCurrentMetadataProfiles()
     .then(result => {
       let options = [];
       if (result) {
-        for(let key in result){
-          options.push({label:key, value:key});
-        }
-       this.profileApiNames = options;
+        result.forEach(element => { 
+          options.push({label:element.QualifiedApiName, value:element.QualifiedApiName});
+        });
       }
+      this.profileApiNames = options;
+    })
+    .catch(error => {
+      this.error = error;
+    });
+  }
+  
+  fieldSetsByProfile(){
+    getFieldSetsByProfile()
+    .then(result => {
       this.modifiedMetadataRecords = JSON.parse(JSON.stringify(result));
     })
     .catch(error => {
       this.error = error;
     });
-  }   
+  }
 
   handleProfile(event) {
     this.profileValueInCombobox = event.detail.value;
@@ -57,7 +68,7 @@ export default class AdminSettingsModal extends LightningElement {
   }
 
   currentFieldSets() {
-    getCurrentMetadataFieldSets({ profileApiName : this.profileValueInCombobox })
+    getCurrentMetadataFieldSets({ profileApiName: this.profileValueInCombobox })
     .then((result) => {
       this.currentFieldSetInCard = result[0].Candidate_Fieldset_in_Card__c;
       this.fieldSetFormInCard();
@@ -181,9 +192,8 @@ export default class AdminSettingsModal extends LightningElement {
   }
 
   updateMetadataRecords() {
-    updateCustomMetadataRecords ({ customMetadataRecords: this.modifiedMetadataRecords })
-      .then (result => {
-        console.log('Result after save===> ' + result);
+    updateCustomMetadataFieldSetSettings ({ customMetadataFieldSetsByProfile: this.modifiedMetadataRecords })
+      .then (() => {
         this.dispatchEvent(
             new ShowToastEvent({
                 title: 'Success',
@@ -193,7 +203,7 @@ export default class AdminSettingsModal extends LightningElement {
         );
         this.closeModal();
       })
-      .catch (error => {
+      .catch ((error) => {
         console.log('Error after save===> ' + error);
         this.dispatchEvent(
           new ShowToastEvent({
