@@ -2,12 +2,12 @@ public with sharing class AdminSettingsControllerLWC {
 
     @AuraEnabled (cacheable=true)
     public static List<Fieldset_Setting__mdt> getCurrentMetadataProfiles() {
-        List<Fieldset_Setting__mdt> fieldSets = new List<Fieldset_Setting__mdt>();
+        List<Fieldset_Setting__mdt> profiles = new List<Fieldset_Setting__mdt>();
         for(Fieldset_Setting__mdt profile : [SELECT QualifiedApiName FROM Fieldset_Setting__mdt]){
-            fieldSets.add(profile);
+            profiles.add(profile);
         }
-        System.debug('fieldSets===> ' + fieldSets);
-        return fieldSets;
+        System.debug('profiles===> ' + profiles);
+        return profiles;
     }
     
     @AuraEnabled (cacheable=true)
