@@ -50,26 +50,27 @@ export default class CandidateModal extends NavigationMixin(LightningElement) {
 
     currentMetadataFieldSets() {
         getCurrentMetadataFieldSets({ profileApiName: this.profileNameAccessing })
-            .then((result) => {
-                this.candidateModalFieldsetName = result[0].Candidate_Fieldset_in_Modal__c;
-                this.getModalCandidateInfo();
-                this.jobAppModalFieldsetName = result[0].Job_Application_Fieldset_in_Modal__c;
-                this.getJobAppInfo();
-            })
-            .catch((error) => {
-                this.error = error;
-            });
+        .then((result) => {
+            this.candidateModalFieldsetName = result[0].Candidate_Fieldset_in_Modal__c;
+            this.getModalCandidateInfo();
+            this.jobAppModalFieldsetName = result[0].Job_Application_Fieldset_in_Modal__c;
+            this.getJobAppInfo();
+        })
+        .catch((error) => {
+            this.error = error;
+        });
     }
 
     getModalCandidateInfo() {
         getFieldSetForm ({ objectName: 'Candidate__c', fieldSetName: this.candidateModalFieldsetName })
         .then(result => {
-            this.candidateModalFieldSetFields = JSON.parse(JSON.stringify(result));
-            for(let key in result) {
-                if (result.hasOwnProperty(key)) { 
-                    this.candidateModalFieldSetFields.push({value:result[key], key:key});
-                }
+            let options = [];
+            if (result) {
+                result.forEach(element => { 
+                    options.push({ label: element, value: element }) 
+                });
             }
+            this.candidateModalFieldSetFields = options;
         }) 
         .catch(error => {
             this.error = error;
@@ -79,12 +80,13 @@ export default class CandidateModal extends NavigationMixin(LightningElement) {
     getJobAppInfo() {
         getFieldSetForm({ objectName: 'Job_Application__c', fieldSetName: this.jobAppModalFieldsetName })
         .then(result => {
-            this.jaFieldSetFields = JSON.parse(JSON.stringify(result));
-            for(let key in result) {
-                if (result.hasOwnProperty(key)) { 
-                    this.jaFieldSetFields.push({value:result[key], key:key});
-                }
+            let options = [];
+            if (result) {
+                result.forEach(element => { 
+                    options.push({ label: element, value: element }) 
+                });
             }
+            this.jaFieldSetFields = options;
         }) 
         .catch(error => {
             this.error = error;

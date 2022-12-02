@@ -82,12 +82,13 @@ export default class CandidatesForPositionLWC extends NavigationMixin(LightningE
     cardCandidateInfo() {
         getFieldSetForm ({ objectName: 'Candidate__c', fieldSetName: this.candidateCardFieldsetName })
         .then(result => {
-            this.candidateCardFieldSetFields = JSON.parse(JSON.stringify(result));
-            for(let key in result) {
-                if (result.hasOwnProperty(key)) { 
-                    this.candidateCardFieldSetFields.push({value:result[key], key:key});
-                }
+            let options = [];
+            if (result) {
+                result.forEach(element => { 
+                    options.push({ label: element, value: element }) 
+                });
             }
+            this.candidateCardFieldSetFields = options;
         }) 
         .catch(error => {
             this.error = error;
