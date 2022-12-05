@@ -1,0 +1,14 @@
+.combobox {
+    overflow: initial;
+}
+
+.checkbox {
+    padding-left: 10px;
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}

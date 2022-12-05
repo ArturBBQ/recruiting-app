@@ -1,0 +1,12 @@
+.my-ja-card {
+    border: 2px solid grey;
+    border-radius: 3px;
+    box-shadow: 4px 1px 1px grey;
+    margin: 10px;
+}
+
+.my-ja-card:hover {
+    border: 3px solid rgb(130, 130, 130);
+    border-radius: 5px;
+    cursor: pointer;
+}
