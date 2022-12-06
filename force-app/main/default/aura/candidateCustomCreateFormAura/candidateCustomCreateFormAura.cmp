@@ -1,0 +1,11 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId,lightning:actionOverride" access="global">
+    <lightning:listView aura:id="listViewCandidates"
+                        objectApiName="Candidate__c"
+                        listName="All"
+                        rows="20"
+                        showSearchBar="true"
+                        showActionBar="false"
+                        enableInlineEdit="true"
+                        showRowLevelActions="false"/>
+    <c:candidateCustomCreateFormLWC objectApiName="Candidate__c"/>
+</aura:component>	
