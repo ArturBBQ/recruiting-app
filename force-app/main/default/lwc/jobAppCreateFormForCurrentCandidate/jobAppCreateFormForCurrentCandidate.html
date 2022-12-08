@@ -1,0 +1,42 @@
+<!-- sldsValidatorIgnore -->
+<template> 
+    <template if:true={ShowModal}>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small"> </lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                      </button>
+                    <h2 class="slds-text-heading_medium slds-hyphenate">Create New Job Application</h2>
+                </header>
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <lightning-card>
+                            <lightning-record-edit-form object-api-name='Job_Application__c' onsuccess={handleSuccess}>
+                                <div class="slds-grid slds-wrap">
+                                    <lightning-input-field field-name="Candidate__c" value={newCandidateId}>  
+                                      </lightning-input-field>
+                                        <template if:true={jobAppFieldSetFields}>
+                                            <template for:each={jobAppFieldSetFields} for:item="f">
+                                                <div key={f.key} class="slds-col slds-size_1-of-2">
+                                                    <lightning-input-field field-name={f.value}>
+                                                    </lightning-input-field>
+                                                </div>
+                                            </template>
+                                        </template> 
+                                </div>
+                                <div class="slds-modal__content slds-col slds-size_1-of-1 slds-p-bottom_small button">
+                                    <lightning-button type="submit" variant="brand" label="Save" class="slds-m-top_small">
+                                      </lightning-button>
+                                </div>
+                            </lightning-record-edit-form>
+                        </lightning-card>
+                    </div>
+                <footer class="slds-modal__footer">
+                  <lightning-button label="Cancel" title="Non-primary action" class="slds-var-m-left_x-small" onclick={closeModal}>
+                    </lightning-button>
+                </footer>
+            </div>
+        </section>
+    </template>
+</template>

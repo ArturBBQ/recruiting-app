@@ -12,12 +12,10 @@ public with sharing class AdminSettingsControllerLWC {
     
     @AuraEnabled (cacheable=true)
     public static Map<String, Fieldset_Setting__mdt> getFieldSetsByProfile() {
-        List<Fieldset_Setting__mdt> fieldSets = new List<Fieldset_Setting__mdt>();
         Map<String, Fieldset_Setting__mdt> fieldSetsByApiName = new Map<String, Fieldset_Setting__mdt>();
         for(Fieldset_Setting__mdt profile : [SELECT QualifiedApiName,  Candidate_Fieldset_in_Card__c, 
                                             Candidate_Fieldset_in_Modal__c, Job_Application_Fieldset_in_Modal__c 
                                             FROM Fieldset_Setting__mdt]){
-            fieldSets.add(profile);
             fieldSetsByApiName.put(profile.QualifiedApiName, profile);
         }
         System.debug('MAP fieldSetsByApiName===> ' + fieldSetsByApiName);
