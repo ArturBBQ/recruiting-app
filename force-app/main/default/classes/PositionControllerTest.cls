@@ -13,7 +13,7 @@ private class PositionControllerTest {
 
     @isTest
     static void testGetFilteredStatus() {
-        Position__c[] positions = TestDataFactory.createPositions(4,'Open');
+        Position__c[] positions = TestDataFactory.createPositions(4,'Open', true);
         PositionController pageCntrl = new PositionController();
         pageCntrl.selectStatus = 'Open';
 
@@ -21,7 +21,7 @@ private class PositionControllerTest {
             pageCntrl.getFilteredStatus();
         Test.stopTest();
 
-        System.assertEquals(1, pageCntrl.positions.size());
+        System.assertEquals(4, pageCntrl.positions.size());
     }
     
     @isTest 
