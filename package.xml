@@ -37,7 +37,7 @@
 		<members>Contact.Languages__c</members>
 		<members>Contact.Level__c</members>
 		<members>Goal.OrigGoalId__c</members>
-		<members>Job_Application__c.Avarage_rating__c</members>
+		<members>Job_Application__c.Average_rating__c</members>
 		<members>Job_Application__c.Candidate__c</members>
 		<members>Job_Application__c.Number_of_reviews__c</members>
 		<members>Job_Application__c.Position__c</members>

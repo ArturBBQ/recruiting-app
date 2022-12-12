@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Date_of_interview</fullName>
+    <active>true</active>
+    <errorConditionFormula>Date_of_review__c - TODAY() &lt; 0 &amp;&amp; ISNULL(CreatedDate)</errorConditionFormula>
+    <errorDisplayField>Date_of_review__c</errorDisplayField>
+    <errorMessage>Date of the interview cannot be before today.</errorMessage>
+</ValidationRule>

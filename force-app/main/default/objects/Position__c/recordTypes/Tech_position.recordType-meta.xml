@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tech_position</fullName>
+    <active>true</active>
+    <description>For Tech-position</description>
+    <label>Tech-position</label>
+    <picklistValues>
+        <picklist>Must_have_skills__c</picklist>
+        <values>
+            <fullName>Communication skills</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>English- Intermediate and better</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>IT - knowledge</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Organizational skills</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Willingness to learn%2Fadaptability</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Status__c</picklist>
+        <values>
+            <fullName>Closed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Open</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending%2E%2E%2E</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Working_format__c</picklist>
+        <values>
+            <fullName>On site</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Remote</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
+</RecordType>

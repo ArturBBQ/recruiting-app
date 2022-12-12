@@ -1,8 +1,5 @@
 import { LightningElement, api } from 'lwc';
 
-import prev from '@salesforce/label/c.Prev'; 
-import next from '@salesforce/label/c.Next';
-
 export default class Paginator2nd extends LightningElement {
 
     pageNo = 1;
@@ -12,11 +9,6 @@ export default class Paginator2nd extends LightningElement {
     
     @api recordsPerPage;
     @api numberOfRecords;
-    
-    label = {
-        prev,
-        next
-      };
 
     get numberOfRecords() {
         return this._numberOfRecords;

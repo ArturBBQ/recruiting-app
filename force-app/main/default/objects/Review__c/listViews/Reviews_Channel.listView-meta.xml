@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reviews_Channel</fullName>
+    <columns>NAME</columns>
+    <columns>Candidate_Position__c</columns>
+    <columns>Interview_type__c</columns>
+    <columns>Rating__c</columns>
+    <columns>Job_Application__c</columns>
+    <columns>Date_of_review__c</columns>
+    <columns>OWNER.ALIAS</columns>
+    <filterScope>Everything</filterScope>
+    <label>Reviews Channel</label>
+</ListView>
