@@ -3,9 +3,10 @@ import getCurrentMetadataFieldSets from '@salesforce/apex/AdminSettingsCandidate
 import getFieldSetApiNames from '@salesforce/apex/AdminSettingsCandidateCustomCreateForm.getFieldSetApiNames';
 import getCurrentFieldSetsByForm from '@salesforce/apex/AdminSettingsCandidateCustomCreateForm.getCurrentFieldSetsByForm'
 import updateCustomMetadataCandidateCreateFormFieldSets from '@salesforce/apex/AdminSettingsCandidateCustomCreateForm.updateCustomMetadataCandidateCreateFormFieldSets';
+import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-export default class AdminSettingsCandidateCreateForm extends LightningElement {
+export default class AdminSettingsCandidateCreateForm extends NavigationMixin(LightningElement) {
 
   ShowModal = false;
   modifiedMetadataRecords = {};
@@ -13,7 +14,6 @@ export default class AdminSettingsCandidateCreateForm extends LightningElement {
   currentJobAppFieldSet;
   candidateFieldSetsOptions = [];
   jobAppFieldSetsOptions = [];
-
 
   @api
   handleAdminSettings() {
@@ -25,8 +25,17 @@ export default class AdminSettingsCandidateCreateForm extends LightningElement {
   }
 
   closeModal() {
-    this.ShowModal = false;
-  }
+    this[NavigationMixin.Navigate]({
+        type: 'standard__objectPage',
+        attributes: {
+            objectApiName: 'Candidate__c',
+            actionName: 'list'
+        },
+        state: {
+            filterName: 'All'
+        },
+    });
+}
 
   mapOfFieldSetsCreateForm() {
     getCurrentFieldSetsByForm()
@@ -99,7 +108,7 @@ export default class AdminSettingsCandidateCreateForm extends LightningElement {
       this.dispatchEvent(
           new ShowToastEvent({
               title: 'Success',
-              message: 'Status updated',
+              message: 'Settings updated',
               variant: 'success'
           })
       );

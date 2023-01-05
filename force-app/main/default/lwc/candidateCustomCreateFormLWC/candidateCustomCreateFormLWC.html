@@ -1,6 +1,7 @@
 <!-- sldsValidatorIgnore -->
 <template>
   <template if:false={isCandidateSave}>
+   <template if:false={isAdminSettingsOpen}>
     <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
       <div class="slds-modal__container">
         <header class="slds-modal__header">
@@ -15,7 +16,6 @@
               <lightning-button variant="brand" label="Admin settings" title="Primary action" onclick={handleConfig} class="slds-m-left_x-small">
                 </lightning-button>
             </template>
-              <c-admin-settings-candidate-create-form></c-admin-settings-candidate-create-form>
                 <lightning-card>
                   <lightning-record-edit-form object-api-name='Candidate__c' onsuccess={handleSuccess}>
                     <div class="slds-grid slds-wrap">
@@ -42,7 +42,9 @@
       </div>
     </section>
       <div class="slds-backdrop slds-backdrop_open"></div>
+   </template>
   </template>
+
   <template if:true={isCandidateSave}>
     <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
       <div class="slds-modal__container">
@@ -59,6 +61,11 @@
     </section>
     <div class="slds-backdrop slds-backdrop_open"></div>
   </template>
+
+    <c-admin-settings-candidate-create-form>
+      </c-admin-settings-candidate-create-form>
+
     <c-job-app-create-form-for-current-candidate new-candidate-id={newCandidateId}>
       </c-job-app-create-form-for-current-candidate>
+      
 </template>
