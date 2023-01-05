@@ -16,6 +16,7 @@ export default class CandidateCustomCreateFormLWC extends NavigationMixin(Lightn
     candidateFieldsetNameForForm;
     candidateFieldSetFields = [];
     isCandidateSave = false;
+    isAdminSettingsOpen = false;
 
     @wire(getRecord, { recordId: USER_ID, fields: [USERPROFILE_NAME] }) 
       userDetails({error, data}) {
@@ -37,6 +38,7 @@ export default class CandidateCustomCreateFormLWC extends NavigationMixin(Lightn
     }
 
     handleConfig() {
+        this.isAdminSettingsOpen = true;
         this.template.querySelector("c-admin-settings-candidate-create-form").handleAdminSettings();
     }
 
